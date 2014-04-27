@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use utf8;
 
-use DBI;
+use Database;
 
 sub new {
 	my $class = shift;
