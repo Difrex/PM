@@ -3,7 +3,7 @@
 use Password;
 use Getopt::Std;
 
-our $VERSION = '0.0.0c';
+our $VERSION = '0.0.0d';
 
 # Debug
 use Data::Dumper;
@@ -12,22 +12,23 @@ sub usage() {
     print STDERR << "EOF";
 Simple password manager writed in Perl. 
 
-Usage:
-	-s                      -- Show password
-	-n [Name of resource]   -- Name of resource
-	-w                      -- Store new password
-	-l [Link]               -- Link to resource
-	-p [Password]           -- Password
-	-r                      -- Remove password
-	-o                      -- Open link
-	-h                      -- Show this help screen and exit
-	-v                      -- Show version info and exit
+  -s                      show password
+  -n [Name of resource]   name of resource
+  -w                      store new password
+  -l [Link]               link to resource
+  -p [Password]           password
+                          if key not selected PM generate secure password
+                          and copy it to xclipboard
+  -r                      remove password
+  -o                      open link
+  -h                      show this help screen and exit
+  -v                      show version info and exit
 
 Examples:
 
 	Show password for resource:
 	\tpm.pl -s -n LOR
-	\tPassword copied to xclipboard.\n\t\tLink is http://linux.org.ru/
+	\tPassword copied to xclipboard.\n\t\tURI is http://linux.org.ru/
 
 	Store new password:
 	\tpm.pl -w -n PRON -l http://superpronsite.com/ -p my_secret_password

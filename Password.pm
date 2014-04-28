@@ -51,7 +51,7 @@ sub show {
     my $q_hash = $db_class->mdo($mdo_q);
 
     # Remove unencrypted file
-    @rm_cmd = ( "rm", "$dec_db_file" );
+    my @rm_cmd = ( "rm", "-f", "$dec_db_file" );
     system(@rm_cmd) == 0 or die "Cannot remove unencrypted database! $!\n";
 
     return $q_hash;
