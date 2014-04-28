@@ -1,15 +1,16 @@
 package Database;
 
 use DBI;
+use GPG;
 
 sub new {
     my $class = shift;
 
 	# Get home dir
-	my $home = $ENV{HOME};
+	my $home = $ENV->{HOME};
 
     my $self  = {
-    	_home 	=> $home;
+    	_home 	=> $home,
     };
 
     bless $self, $class;
@@ -27,7 +28,7 @@ sub connect {
 }
 
 sub mdo {
-	my ($self) = @_;
+	my ($self, $query, $type) = @_;
 	my $dbh = $self->{_dbh};
 }
 
@@ -37,7 +38,7 @@ sub create_base {
 	my $pm_dir 	= $home."/.PM/";
 	
 	# Check dir 
-	if !(-d $pm_dir) {
+	if (!(-d $pm_dir)) {
 		# Create dirrectory
 		@mkdir_cmd = ("mkdir", "$pm_dir");
 		system(@mkdir_cmd) == 0 or die "Cannot create dir $pm_dir: $!\n";
@@ -50,6 +51,10 @@ sub create_base {
 		my $dbh = DBI->connect("dbi:SQLite:dbname=$pm_dir/db.sqlite","","");
 		print "Create database schema\n";
 		my $q_table = "create table passwords(name VARCHAR(32), resource TEXT, password TEXT)";
+		$dbh->do($q_table);
+
+		# Encrypt db
+		# TODO: write this
 
 		return 0;
 	}

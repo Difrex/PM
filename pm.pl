@@ -3,7 +3,7 @@
 use Password;
 use Getopt::Std;
 
-our $VERSION = '0.0.0a';
+our $VERSION = '0.0.0b';
 
 # Debug
 use Data::Dumper;
@@ -54,3 +54,7 @@ sub init() {
 
 # Parse cmd line
 init();
+
+my $pass = Password->new();
+# Don't use it's before GPG and Database
+# $pass->check_config() == 0 or die "$!\n";
