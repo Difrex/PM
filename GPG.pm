@@ -9,8 +9,6 @@ sub new {
     my $home = shift;
     my $db   = $home . "/.PM/db.sqlite";
 
-    # Get default private key
-
     my $self = { _db => $db, };
 
     bless $self, $class;
@@ -23,6 +21,10 @@ sub encrypt_db {
     my ( $self, $file ) = @_;
     my $db = $self->{_db};
 
+    # Remove old database
+    @rm_db = ( "rm", "-f", "$db" );
+    system(@rm_db) == 0 or die "Cannot remove old database: $!\n";
+
     # gpg --output test.gpg --encrypt -a --default-recipient-self test
     @enc_cmd = (
         "$gpg", "--output",
@@ -30,11 +32,14 @@ sub encrypt_db {
         "-a",   "--default-recipient-self",
         "$file"
     );
-    system(@enc_cmd) == 0 or die "Cannot encrypt! $!\n";
+    system(@enc_cmd) == 0
+        or die "Cannot encrypt!\nDecrypted file: $file\nTraceback: $!\n";
 
     # Remove unencrypted file
-    @rm_cmd = ( "rm", "$file" );
+    @rm_cmd = ( "rm", "-f", "$file" );
     system(@rm_cmd) == 0 or die "Cannot remove file $file: $!\n";
+
+    return 0;
 }
 
 # Decrypt database, save it in new place
