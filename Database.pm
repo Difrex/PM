@@ -6,11 +6,14 @@ use GPG;
 sub new {
     my $class = shift;
 
-	# Get home dir
-	my $home = $ENV->{HOME};
+    # Get home dir
+    my $home = $ENV->{HOME};
 
-    my $self  = {
-    	_home 	=> $home,
+    my $gpg = GPG->new();
+
+    my $self = {
+        _home => $home,
+        _gpg  => $gpg,
     };
 
     bless $self, $class;
@@ -18,50 +21,53 @@ sub new {
 }
 
 sub connect {
-	my ($self) = @_;
-	my $home 	= $self->{_home};
-	my $db_file = $home . "/.PM/db.sqlite";
-    
-    my $dbh = DBI->connect("dbi:SQLite:dbname=$db_file","","");
+    my ($self)  = @_;
+    my $home    = $self->{_home};
+    my $db_file = $home . "/.PM/db.sqlite";
+
+    my $dbh = DBI->connect( "dbi:SQLite:dbname=$db_file", "", "" );
 
     return $dbh;
 }
 
 sub mdo {
-	my ($self, $query, $type) = @_;
-	my $dbh = $self->{_dbh};
+    my ( $self, $query, $type ) = @_;
+    my $dbh = $self->{_dbh};
 }
 
 sub create_base {
-	my ($self) 	= @_;
-	my $home 	= $self->{_home};
-	my $pm_dir 	= $home."/.PM/";
-	
-	# Check dir 
-	if (!(-d $pm_dir)) {
-		# Create dirrectory
-		@mkdir_cmd = ("mkdir", "$pm_dir");
-		system(@mkdir_cmd) == 0 or die "Cannot create dir $pm_dir: $!\n";
+    my ($self) = @_;
+    my $home   = $self->{_home};
+    my $pm_dir = $home . "/.PM/";
 
-		# Create DB file
-		@createdb_cmd = ("touch", "$pm_dir/db.sqlite");
-		system(@createdb_cmd) == 0 or die "Cannot create database file: $!\n";
+    # Check dir
+    if ( !( -d $pm_dir ) ) {
 
-		# Create table. TODO: write this
-		my $dbh = DBI->connect("dbi:SQLite:dbname=$pm_dir/db.sqlite","","");
-		print "Create database schema\n";
-		my $q_table = "create table passwords(name VARCHAR(32), resource TEXT, password TEXT)";
-		$dbh->do($q_table);
+        # Create dirrectory
+        my @mkdir_cmd = ( "mkdir", "$pm_dir" );
+        system(@mkdir_cmd) == 0 or die "Cannot create dir $pm_dir: $!\n";
 
-		# Encrypt db
-		# TODO: write this
+        # Create DB file
+        my @createdb_cmd = ( "touch", "$pm_dir/db.sqlite" );
+        system(@createdb_cmd) == 0 or die "Cannot create database file: $!\n";
 
-		return 0;
-	}
-	else {
-		print "Dirrectory is exist!\n";
-		return 0;
-	}
+        # Create table. TODO: write this
+        my $dbh
+            = DBI->connect( "dbi:SQLite:dbname=$pm_dir/db.sqlite", "", "" );
+        print "Create database schema\n";
+        my $q_table
+            = "create table passwords(name VARCHAR(32), resource TEXT, password TEXT)";
+        $dbh->do($q_table);
+
+        # Encrypt db
+        # TODO: write this
+
+        return 0;
+    }
+    else {
+        print "Dirrectory is exist!\n";
+        return 0;
+    }
 }
 
 1;
