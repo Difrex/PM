@@ -3,7 +3,7 @@
 use Password;
 use Getopt::Std;
 
-our $VERSION = '0.0.0b';
+our $VERSION = '0.0.0c';
 
 # Debug
 use Data::Dumper;

@@ -7,7 +7,7 @@ sub new {
     my $class = shift;
 
     # Get home dir
-    my $home = $ENV->{HOME};
+    my $home = $ENV{HOME};
 
     my $gpg = GPG->new($home);
 
@@ -27,9 +27,38 @@ sub connect {
     return $dbh;
 }
 
+# Query proccessing mechanism
 sub mdo {
-    my ( $self, $query, $type, $file ) = @_;
-    my $dbh = Database->connect();
+    my ( $self, $query ) = @_;
+    my $db_file = $query->{file};
+    my $q       = $query->{query};
+    my $name    = $query->{name};
+    my $type    = $query->{type};
+
+    my $dbh = Database->connect($db_file);
+
+    # Select
+    if ( $type eq 'select' ) {
+        my $sth = $dbh->prepare($q);
+        $sth->execute();
+        my ( $name, $resource, $password ) = $sth->fetchrow_array();
+
+        my $q_hash = {
+            name     => $name,
+            resource => $resource,
+            password => $password,
+        };
+        return $q_hash;
+    }
+    elsif ( $type eq 'do' ) {
+        $dbh->do($q);
+        return 0;
+    }
+    else {
+        print STDERR "Something went wrong! $!\n";
+        return 1;
+    }
+    return 1;
 }
 
 # Create config dirrectory and DB if not exist
