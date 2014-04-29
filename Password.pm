@@ -7,9 +7,6 @@ use utf8;
 use Database;
 use GPG;
 
-use PasswordSave;
-use PasswordShow;
-
 sub new {
     my $class = shift;
 
