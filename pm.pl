@@ -3,7 +3,7 @@
 use Password;
 use Getopt::Std;
 
-our $VERSION = '0.0.0d';
+our $VERSION = '0.0.1a';
 
 # Debug
 use Data::Dumper;
@@ -45,7 +45,7 @@ EOF
 sub init() {
     my $opt_string = 'swn:l:p:rhv';
     getopts("$opt_string") or usage();
-    our ( $opt_s, $opt_w, $opt_n, $opt_r, $opt_l, $opt_p, $opt_h, $opt_v );
+    our ( $opt_s, $opt_w, $opt_n, $opt_r, $opt_l, $opt_p, $opt_h, $opt_v, $opt_o );
 
     print "Simple password manager writed in Perl.\nVersion: "
         . $VERSION

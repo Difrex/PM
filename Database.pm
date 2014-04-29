@@ -51,7 +51,7 @@ sub mdo {
         return $q_hash;
     }
     elsif ( $type eq 'do' ) {
-        $dbh->do($q);
+        $dbh->do($q) or die "$!\n";
         return 0;
     }
     else {

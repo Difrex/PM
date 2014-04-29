@@ -22,8 +22,6 @@ sub new {
     my $self = {
         _db     => $db,
         _gpg    => $gpg,
-        _p_save => $p_save,
-        _p_show => $p_show,
     };
 
     bless $self, $class;
@@ -55,6 +53,47 @@ sub show {
     system(@rm_cmd) == 0 or die "Cannot remove unencrypted database! $!\n";
 
     return $q_hash;
+}
+
+# Decrypt base and store new password
+sub save {
+    my ( $self, $store ) = @_;
+    my $db_class = $self->{_db};
+    my $gpg      = $self->{_gpg};
+
+    my $name     = $store->{name};
+    my $resource = $store->{resource};
+    my $password = $store->{password};
+    my $generate = $store->{gen};
+
+    if ( $generate == 1 ) {
+        $password = Password->generate();
+    }
+
+    # Decrypt database
+    my $dec_db_file = $gpg->decrypt_db();
+    my $q
+        = "insert into passwords(name, resource, password) values($name, $resource, $password)";
+    my $mdo_q = {
+        file  => $dec_db_file,
+        name  => $name,
+        query => $query,
+        type  => 'do',
+    };
+
+    $db_class->mdo($mdo_q);
+    $gpg->encrypt_db($dec_db_file);
+
+    return 0;
+}
+
+# Generate password
+sub generate {
+    my @chars = ( "A" .. "Z", "a" .. "z", 0 .. 9 );
+    my $string;
+    $string .= $chars[ rand @chars ] for 1 .. 16;
+
+    return $string;
 }
 
 # Check configuration. If it doesn't exist create it.
