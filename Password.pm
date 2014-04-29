@@ -13,12 +13,9 @@ sub new {
     my $db  = Database->new();
     my $gpg = GPG->new( $ENV{HOME} );
 
-    my $p_save = PasswordSave->new();
-    my $p_show = PasswordShow->new();
-
     my $self = {
-        _db     => $db,
-        _gpg    => $gpg,
+        _db  => $db,
+        _gpg => $gpg,
     };
 
     bless $self, $class;
@@ -74,7 +71,7 @@ sub save {
     my $mdo_q = {
         file  => $dec_db_file,
         name  => $name,
-        query => $query,
+        query => $q,
         type  => 'do',
     };
 
@@ -102,8 +99,10 @@ sub check_config {
     else {
         my $db = $self->{_db};
         $db->create_base();
+
+        return 0;
     }
-    return 0;
+    return 1;
 }
 
 1;

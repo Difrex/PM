@@ -1,4 +1,4 @@
-package Clip;
+package ClipPass;
 
 use Clipboard;
 
