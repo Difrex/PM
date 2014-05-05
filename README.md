@@ -3,10 +3,11 @@ PM
 
 Simple password manager writed in perl.
 
-== INSTALL ==
+INSTALL
+=======
 
-=== Perl modules ===
-
+Perl modules
+===
 	cpan install Module::Name. 
 
 Not recommended. Please use you package manager.
@@ -20,7 +21,7 @@ On Fedora:
 
 On Debian-based systems:
 
-	I'm don't have it now.
+	I'm don't have it now :)
 
 
 TODO

@@ -7,7 +7,7 @@ use ClipPass;
 # Debug
 use Data::Dumper;
 
-our $VERSION = '0.0.1a';
+our $VERSION = '0.0.1b';
 
 sub usage() {
     print STDERR << "EOF";
@@ -69,15 +69,24 @@ init();
 my $copy = ClipPass->new();
 
 # Command line arguments switch
+# It's really ugly code. Sorry :(
 if ( defined($opt_s) and defined($opt_n) and !defined($opt_o) ) {
 
-    # Copy password to xclipboard
-    print "$opt_s, $opt_n\n";
+    my $get_h = $pass->show($opt_n);
+    $copy->copy($get_h->{password});
+
+    print "Password copied to xclipboard.\nURI is " . $get_h->{resource};
 }
 elsif ( defined($opt_s) and defined($opt_n) and defined($opt_o) ) {
 
-    # Copy password to xclipboard and open the uri
-    print "$opt_s, $opt_n, $opt_o\n";
+    my $get_h = $pass->show($opt_n);
+    $copy->copy($get_h->{password});
+
+    # Open resource.
+    my @open_cmd = ('xdg-open', $get_h->{resource});
+    system(@open_cmd) == 0 or die "Cannot open URI: $!\n";
+
+    print "Password copied to clipboard. Trying to open uri.\n";
 }
 elsif ( defined($opt_w)
     and defined($opt_n)
