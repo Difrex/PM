@@ -3,11 +3,10 @@ PM
 
 Simple password manager writed in perl.
 
-INSTALL
-=======
+# INSTALL
 
-Perl modules
-===
+## Perl modules
+
 	cpan install Module::Name. 
 
 Not recommended. Please use you package manager.
@@ -21,11 +20,10 @@ On Fedora:
 
 On Debian-based systems:
 
-	I'm don't have it now :)
+	apt-get install libtext-clip-perl class-dbi-sqlite-perl
 
 
-TODO
-====
+# TODO
 
 * Store decrypted DB into RAM not in /tmp/
 * Different keys selection
