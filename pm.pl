@@ -7,7 +7,7 @@ use ClipPass;
 # Debug
 use Data::Dumper;
 
-our $VERSION = '0.0.1b';
+our $VERSION = '0.0.1c';
 
 sub usage() {
     print STDERR << "EOF";
@@ -95,6 +95,14 @@ elsif ( defined($opt_w)
 {
     # Generate password and store it into DB
     print "$opt_w, $opt_n, $opt_l, $opt_p\n";
+
+    my $store_h = {
+      name => $opt_n,
+      resource => $opt_l,
+      gen => 1,
+    };
+
+    $pass->save($store_h) == 0 or die "Oops! 105: pm.pl. $!\n";
 }
 elsif ( defined($opt_w)
     and defined($opt_n)
@@ -103,6 +111,15 @@ elsif ( defined($opt_w)
 {
     # Store new password into DB
     print "$opt_w, $opt_n, $opt_l, $opt_p\n";
+
+    my $store_h = {
+      name => $opt_n,
+      resource => $opt_l,
+      password => $opt_p,
+      gen => 0,
+    };
+
+    $pass->save($store_h) == 0 or die "Oops! 122: pm.pl. $!\n";
 }
 else {
     print "FAIL\n" and usage;
