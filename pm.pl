@@ -7,7 +7,7 @@ use ClipPass;
 # Debug
 use Data::Dumper;
 
-our $VERSION = '0.0.1c';
+our $VERSION = '0.0.1-alpha';
 
 sub usage() {
     print STDERR << "EOF";
@@ -61,7 +61,7 @@ sub init() {
 my $pass = Password->new();
 
 # Don't use it's before GPG and Database
-# $pass->check_config() == 0 or die "$!\n";
+$pass->check_config() == 0 or die "$!\n";
 
 # Parse cmd line
 init();
@@ -73,9 +73,11 @@ my $copy = ClipPass->new();
 if ( defined($opt_s) and defined($opt_n) and !defined($opt_o) ) {
 
     my $get_h = $pass->show($opt_n);
-    $copy->copy($get_h->{password});
+    my $get_pass = $get_h->{password};
 
-    print "Password copied to xclipboard.\nURI is " . $get_h->{resource};
+    $copy->copy($get_pass);
+
+    print "Password copied to xclipboard.\nURI is " . $get_h->{resource} . "\n";
 }
 elsif ( defined($opt_s) and defined($opt_n) and defined($opt_o) ) {
 

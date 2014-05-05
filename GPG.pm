@@ -1,12 +1,13 @@
 # GPG layer for encrypt/decrypt passwords database
 package GPG;
 
-our $gpg = '/usr/bin/gpg';
+# Debug
+use Data::Dumper;
 
 sub new {
     my $class = shift;
 
-    my $home = shift;
+    my $home = $ENV{HOME};
     my $db   = $home . "/.PM/db.sqlite";
 
     my $self = { _db => $db, };
@@ -25,13 +26,13 @@ sub encrypt_db {
     @rm_db = ( "rm", "-f", "$db" );
     system(@rm_db) == 0 or die "Cannot remove old database: $!\n";
 
-    # gpg --output test.gpg --encrypt -a --default-recipient-self test
+    # gpg --output test.gpg --encrypt test -a --default-recipient-self
     @enc_cmd = (
-        "$gpg", "--output",
-        "$db",  "--encrypt",
-        "-a",   "--default-recipient-self",
-        "$file"
+        "gpg", "--output", "$db",
+        "-a", "--default-recipient-self",
+        "--encrypt", "$file",
     );
+    
     system(@enc_cmd) == 0
         or die "Cannot encrypt!\nDecrypted file: $file\nTraceback: $!\n";
 
@@ -48,6 +49,8 @@ sub decrypt_db {
     my ($self) = @_;
     my $db = $self->{_db};
 
+    my $gpg = '/usr/bin/gpg';
+
     # Generate random file name
     my @chars = ( "A" .. "Z", "a" .. "z" );
     my $string;
@@ -55,8 +58,8 @@ sub decrypt_db {
     my $file = '/tmp/' . 'pm.' . $string;
 
     # gpg --output /tmp/decryptfile --decrypt $db
-    @dec_cmd = ( "$gpg", "--decrypt", "$db", "--output", "$file" );
-    system(@sys_dec_cmd) == 0 or die "Cannot decrypt $db: $!\n";
+    @dec_cmd = ( "$gpg", "--output", "$file", "--decrypt", "$db" );
+    system(@dec_cmd) == 0 or die "Cannot decrypt $db: $!\n";
 
     return $file;
 }

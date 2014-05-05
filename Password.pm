@@ -7,6 +7,9 @@ use utf8;
 use Database;
 use GPG;
 
+# Debug
+use Data::Dumper;
+
 sub new {
     my $class = shift;
 
@@ -67,7 +70,8 @@ sub save {
     # Decrypt database
     my $dec_db_file = $gpg->decrypt_db();
     my $q
-        = "insert into passwords(name, resource, password) values($name, $resource, $password)";
+        = "insert into passwords(name, resource, password) 
+            values('$name', '$resource', '$password')";
     my $mdo_q = {
         file  => $dec_db_file,
         name  => $name,
@@ -100,6 +104,7 @@ sub check_config {
         my $db = $self->{_db};
         $db->create_base();
 
+        print "Done!\n";
         return 0;
     }
     return 1;

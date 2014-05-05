@@ -5,15 +5,14 @@ use Clipboard;
 sub new {
     my $class = shift;
 
-    my $self = { _password => shift, };
+    my $self = {};
 
     bless $self, $class;
     return $self;
 }
 
 sub copy {
-    my ($self) = @_;
-    my $password = $self->{_password};
+    my ( $self, $password ) = @_;
 
     if ( 'Clipboard::Xclip' eq $Clipboard::driver ) {
         no warnings 'redefine';

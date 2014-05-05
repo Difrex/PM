@@ -3,6 +3,8 @@ package Database;
 use DBI;
 use GPG;
 
+use Password;
+
 sub new {
     my $class = shift;
 
@@ -51,7 +53,7 @@ sub mdo {
         return $q_hash;
     }
     elsif ( $type eq 'do' ) {
-        $dbh->do($q) or die "$!\n";
+        $dbh->do("$q") or die "$!\n";
         return 0;
     }
     else {
@@ -72,15 +74,19 @@ sub create_base {
     if ( !( -d $pm_dir ) ) {
 
         # Create dirrectory
+        print "Creating configuration dirrectory...\n";
         my @mkdir_cmd = ( "mkdir", "$pm_dir" );
         system(@mkdir_cmd) == 0 or die "Cannot create dir $pm_dir: $!\n";
 
-        my $first_sqlite = '/tmp/db.sqlite';
+        my $pass = Password->new();
+        my $string = $pass->generate();
+        my $first_sqlite = "/tmp/$string";
 
         # Create DB file
         my @createdb_cmd = ( "touch", "$first_sqlite" );
         system(@createdb_cmd) == 0 or die "Cannot create database file: $!\n";
 
+        print "Creating database...\n";
         # Create table.
         my $dbh = DBI->connect( "dbi:SQLite:dbname=$first_sqlite", "", "" );
         print "Create database schema\n";
@@ -88,6 +94,7 @@ sub create_base {
             = "create table passwords(name VARCHAR(32), resource TEXT, password TEXT)";
         $dbh->do($q_table);
 
+        print "Encrypt database...\n";
         # Encrypt db
         $gpg->encrypt_db($first_sqlite);
 
