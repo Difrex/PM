@@ -58,13 +58,13 @@ sub init() {
     usage if $opt_h;
 }
 
-# Parse cmd line
-init();
-
 my $pass = Password->new();
 
 # Don't use it's before GPG and Database
 # $pass->check_config() == 0 or die "$!\n";
+
+# Parse cmd line
+init();
 
 my $copy = ClipPass->new();
 
