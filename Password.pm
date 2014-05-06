@@ -99,7 +99,7 @@ sub generate {
 sub check_config {
     my ($self) = @_;
     if ( -e $ENV{HOME} . "/.PM/db.sqlite" ) {
-        return 0;
+        return 1;
     }
     else {
         my $db = $self->{_db};

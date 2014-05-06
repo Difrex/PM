@@ -32,6 +32,7 @@ On Debian-based systems:
 
 # TODO
 
+* Password lenght
 * Username support
 * Store decrypted DB into RAM not in /tmp/
 * Different keys selection

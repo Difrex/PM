@@ -62,10 +62,11 @@ sub init() {
 my $pass = Password->new();
 
 # Don't use it's before GPG and Database
-$pass->check_config() == 0 or die "$!\n";
+if ( $pass->check_config() == 0 ) {
+  exit 0;
+}
 
-# Parse cmd line
-init();
+init() if $pass->check_config() == 1;
 
 my $copy = ClipPass->new();
 
@@ -125,5 +126,5 @@ elsif ( defined($opt_w)
     $pass->save($store_h) == 0 or die "Oops! 122: pm.pl. $!\n";
 }
 else {
-    print "FAIL\n" and usage;
+    usage;
 }

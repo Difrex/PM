@@ -103,8 +103,9 @@ sub create_base {
     }
     else {
         print "Dirrectory is exist!\n";
-        return 0;
+        return 1;
     }
+    return 1;
 }
 
 1;
