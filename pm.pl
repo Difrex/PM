@@ -7,7 +7,7 @@ use ClipPass;
 # Debug
 use Data::Dumper;
 
-our $VERSION = '0.0.1-alpha';
+our $VERSION = '0.0.1-beta1';
 
 sub usage() {
     print STDERR << "EOF";
@@ -28,24 +28,24 @@ Simple password manager writed in Perl.
 
 Examples:
 
-	Show password for resource:
-	\tpm.pl -s -n LOR
-	\tPassword copied to xclipboard.\n\t\tURI is http://linux.org.ru/
+  Show password for resource:
+  \tpm.pl -s -n LOR
+  \tPassword copied to xclipboard.\n\t\tURI is http://linux.org.ru/
 
-	Store new password:
-	\tpm.pl -w -n PRON -l http://superpronsite.com/ -p my_secret_password
-	\tPassword for resource PRON is stored into DB!
+  Store new password:
+  \tpm.pl -w -n PRON -l http://superpronsite.com/ -p my_secret_password
+  \tPassword for resource PRON is stored into DB!
 
-	Copy password and open link:
-	\tpm.pl -s -n LOR -o
-	\tPassword copied to clipboard. Trying to open uri.
+  Copy password and open link:
+  \tpm.pl -s -n LOR -o
+  \tPassword copied to clipboard. Trying to open uri.
 
 EOF
     exit 1;
 }
 
 sub init() {
-    my $opt_string = 'swn:l:p:rhvou';
+    my $opt_string = 'swn:l:p:rhvou:';
     getopts("$opt_string") or usage();
     our (
         $opt_s, $opt_w, $opt_n, $opt_r, $opt_l,
@@ -62,7 +62,7 @@ sub init() {
 my $pass = Password->new();
 
 if ( $pass->check_config() == 0 ) {
-  exit 0;
+    exit 0;
 }
 
 init();
@@ -73,20 +73,21 @@ my $copy = ClipPass->new();
 # It's really ugly code. Sorry :(
 if ( defined($opt_s) and defined($opt_n) and !defined($opt_o) ) {
 
-    my $get_h = $pass->show($opt_n);
+    my $get_h    = $pass->show($opt_n, $opt_u);
     my $get_pass = $get_h->{password};
 
     $copy->copy($get_pass);
 
-    print "Password copied to xclipboard.\nURI is " . $get_h->{resource} . "\n";
+    print "Password copied to xclipboard.\nURI is "
+        . $get_h->{resource} . "\n";
 }
 elsif ( defined($opt_s) and defined($opt_n) and defined($opt_o) ) {
 
-    my $get_h = $pass->show($opt_n);
-    $copy->copy($get_h->{password});
+    my $get_h = $pass->show($opt_n, $opt_u);
+    $copy->copy( $get_h->{password} );
 
     # Open resource.
-    my @open_cmd = ('xdg-open', $get_h->{resource});
+    my @open_cmd = ( 'xdg-open', $get_h->{resource} );
     system(@open_cmd) == 0 or die "Cannot open URI: $!\n";
 
     print "Password copied to clipboard. Trying to open uri.\n";
@@ -100,9 +101,10 @@ elsif ( defined($opt_w)
     print "$opt_w, $opt_n, $opt_l, $opt_p\n";
 
     my $store_h = {
-      name => $opt_n,
-      resource => $opt_l,
-      gen => 1,
+        name     => $opt_n,
+        resource => $opt_l,
+        gen      => 1,
+        username => $opt_u,
     };
 
     $pass->save($store_h) == 0 or die "Oops! 105: pm.pl. $!\n";
@@ -116,10 +118,11 @@ elsif ( defined($opt_w)
     print "$opt_w, $opt_n, $opt_l, $opt_p\n";
 
     my $store_h = {
-      name => $opt_n,
-      resource => $opt_l,
-      password => $opt_p,
-      gen => 0,
+        name     => $opt_n,
+        resource => $opt_l,
+        password => $opt_p,
+        gen      => 0,
+        username => $opt_u,
     };
 
     $pass->save($store_h) == 0 or die "Oops! 122: pm.pl. $!\n";

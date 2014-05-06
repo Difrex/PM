@@ -26,7 +26,7 @@ sub new {
 }
 
 sub show {
-    my ( $self, $name ) = @_;
+    my ( $self, $name, $username ) = @_;
     my $db_class = $self->{_db};
     my $gpg      = $self->{_gpg};
 
@@ -34,8 +34,15 @@ sub show {
     my $dec_db_file = $gpg->decrypt_db();
 
     # Query
-    my $query_string
-        = "select name, resource, password from passwords where name='$name'";
+    my $query_string;
+    if ( defined($username) ) {
+        $query_string = "select name, resource, password from passwords 
+            where name='$name' and username='$username'";
+    }
+    else {
+        $query_string
+            = "select name, resource, password from passwords where name='$name'";
+    }
 
     my $mdo_q = {
         file  => $dec_db_file,
@@ -62,7 +69,12 @@ sub save {
     my $resource = $store->{resource};
     my $password = $store->{password};
     my $generate = $store->{gen};
-    my $username = defined($store->{username}) ? '' : '';
+
+    # Username check
+    my $username = '';
+    if (defined($store->{username})) {
+        $username = $store->{username}
+    }
 
     if ( $generate == 1 ) {
         $password = Password->generate();
@@ -70,8 +82,7 @@ sub save {
 
     # Decrypt database
     my $dec_db_file = $gpg->decrypt_db();
-    my $q
-        = "insert into passwords(name, resource, password, username) 
+    my $q = "insert into passwords(name, resource, password, username) 
             values('$name', '$resource', '$password', '$username')";
     my $mdo_q = {
         file  => $dec_db_file,
