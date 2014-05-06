@@ -71,15 +71,20 @@ sub create_base {
     my $gpg    = $self->{_gpg};
 
     # Check dir
-    if ( !( -d $pm_dir ) ) {
+    if ( !( -d $pm_dir ) or !( -e $pm_dir . "db.sqlite" ) ) {
+
+        # Remove old configuration dirrectory
+        print "Remove old dirrectory...\n";
+        my @rm_old_cmd = ( 'rm', '-rf', $pm_dir );
+        system(@rm_old_cmd) == 0 or die "Cannot remove $pm_dir: $!\n";
 
         # Create dirrectory
         print "Creating configuration dirrectory...\n";
         my @mkdir_cmd = ( "mkdir", "$pm_dir" );
         system(@mkdir_cmd) == 0 or die "Cannot create dir $pm_dir: $!\n";
 
-        my $pass = Password->new();
-        my $string = $pass->generate();
+        my $pass         = Password->new();
+        my $string       = $pass->generate();
         my $first_sqlite = "/tmp/$string";
 
         # Create DB file
@@ -87,6 +92,7 @@ sub create_base {
         system(@createdb_cmd) == 0 or die "Cannot create database file: $!\n";
 
         print "Creating database...\n";
+
         # Create table.
         my $dbh = DBI->connect( "dbi:SQLite:dbname=$first_sqlite", "", "" );
         print "Create database schema\n";
@@ -96,6 +102,7 @@ sub create_base {
         $dbh->do($q_table);
 
         print "Encrypt database...\n";
+
         # Encrypt db
         $gpg->encrypt_db($first_sqlite);
 
