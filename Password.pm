@@ -62,6 +62,7 @@ sub save {
     my $resource = $store->{resource};
     my $password = $store->{password};
     my $generate = $store->{gen};
+    # my $username = $store->{username};
 
     if ( $generate == 1 ) {
         $password = Password->generate();

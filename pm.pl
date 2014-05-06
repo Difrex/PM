@@ -17,6 +17,7 @@ Simple password manager writed in Perl.
   -n [Name of resource]   name of resource
   -w                      store new password
   -l [Link]               link to resource
+  -u                      username
   -p [Password]           password
                           if key not selected PM generate secure password
                           and copy it to xclipboard
@@ -44,11 +45,11 @@ EOF
 }
 
 sub init() {
-    my $opt_string = 'swn:l:p:rhvo';
+    my $opt_string = 'swn:l:p:rhvou';
     getopts("$opt_string") or usage();
     our (
         $opt_s, $opt_w, $opt_n, $opt_r, $opt_l,
-        $opt_p, $opt_h, $opt_v, $opt_o
+        $opt_p, $opt_h, $opt_v, $opt_o, $opt_u
     );
 
     print "Simple password manager writed in Perl.\nVersion: "
