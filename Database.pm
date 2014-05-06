@@ -41,8 +41,25 @@ sub mdo {
 
     # Select
     if ( $type eq 'select' ) {
+
+        # Bad hack
+        if ( $name eq 'all' ) {
+            my $q = 'select name, resource, username from passwords';
+
+            my $sth = $dbh->prepare($q);
+            my $rv  = $sth->execute();
+            print "\nNAME\tRESOURCE\tUSERNAME\n";
+            while ( my ( $name, $resource, $username )
+                = $sth->fetchrow_array() )
+            {
+                print "\n$name\t$resource\t$username\n";
+            }
+            exit 0;
+        }
+
         my $sth = $dbh->prepare($q);
         $sth->execute();
+
         my ( $name, $resource, $password ) = $sth->fetchrow_array();
 
         my $q_hash = {

@@ -62,7 +62,7 @@ sub save {
     my $resource = $store->{resource};
     my $password = $store->{password};
     my $generate = $store->{gen};
-    # my $username = $store->{username};
+    my $username = defined($store->{username}) ? '' : '';
 
     if ( $generate == 1 ) {
         $password = Password->generate();
@@ -71,8 +71,8 @@ sub save {
     # Decrypt database
     my $dec_db_file = $gpg->decrypt_db();
     my $q
-        = "insert into passwords(name, resource, password) 
-            values('$name', '$resource', '$password')";
+        = "insert into passwords(name, resource, password, username) 
+            values('$name', '$resource', '$password', '$username')";
     my $mdo_q = {
         file  => $dec_db_file,
         name  => $name,

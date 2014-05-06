@@ -61,12 +61,11 @@ sub init() {
 
 my $pass = Password->new();
 
-# Don't use it's before GPG and Database
 if ( $pass->check_config() == 0 ) {
   exit 0;
 }
 
-init() if $pass->check_config() == 1;
+init();
 
 my $copy = ClipPass->new();
 
