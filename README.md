@@ -50,6 +50,11 @@ Show help screen:
 
 # Changelog
 
+## 0.0.1-beta1
+
+* Show all enteries
+* Username support
+
 ## 0.0.1-alpha
 
 * Small fix in GPG.pm
@@ -58,6 +63,5 @@ Show help screen:
 # TODO
 
 * Password lenght
-* Username support
 * Store decrypted DB into RAM not in /tmp/
 * Different keys selection
