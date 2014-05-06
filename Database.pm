@@ -54,6 +54,9 @@ sub mdo {
             {
                 print "\n$name\t$resource\t$username\n";
             }
+            # Remove unencrypted file
+            my @rm_cmd = ( "rm", "-f", "$db_file" );
+            system(@rm_cmd) == 0 or die "Cannot remove unencrypted database! $!\n";
             exit 0;
         }
 
