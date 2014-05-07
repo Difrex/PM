@@ -77,9 +77,15 @@ if ( defined($opt_s) and defined($opt_n) and !defined($opt_o) ) {
     my $get_pass = $get_h->{password};
 
     $copy->copy($get_pass);
-
-    print "Password copied to xclipboard.\nURI is "
-        . $get_h->{resource} . "\n";
+    # TEST
+    use Term::ANSIColor;
+    print color 'green';
+    print "Password copied to xclipboard.";
+    print color 'reset';
+    print "\nURI is ";
+    print color 'bold blue';
+    print $get_h->{resource} . "\n";
+    print color 'reset';
 }
 elsif ( defined($opt_s) and defined($opt_n) and defined($opt_o) ) {
 
