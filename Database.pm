@@ -48,11 +48,15 @@ sub mdo {
 
             my $sth = $dbh->prepare($q);
             my $rv  = $sth->execute();
-            print "\nNAME\tRESOURCE\tUSERNAME\n";
+
+
+
+            printf "%-11s %-11s %-11s\n", "NAME", "RESOURCE", "USERNAME";
             while ( my ( $name, $resource, $username )
                 = $sth->fetchrow_array() )
             {
-                print "\n$name\t$resource\t$username\n";
+                printf "%-11s %-11s %-11s\n",
+                $name, $resource, "\t$username";
             }
             # Remove unencrypted file
             my @rm_cmd = ( "rm", "-f", "$db_file" );
