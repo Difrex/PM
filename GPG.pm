@@ -10,10 +10,10 @@ sub new {
     my $home = $ENV{HOME};
     my $db   = $home . "/.PM/db.sqlite";
 
-    my $self = { 
-        _db => $db,
+    my $self = {
+        _db   => $db,
         _home => $home,
-     };
+    };
 
     bless $self, $class;
     return $self;
@@ -33,22 +33,20 @@ sub encrypt_db {
     my @enc_cmd;
     my $recipient;
     if ( -e $self->{_home} . "/.PM/.key" ) {
-        open my $key_f, "<" , $self->{_home} . "/.PM/.key"
+        open my $key_f, "<", $self->{_home} . "/.PM/.key"
             or die "Cannot open file: $!\n";
-        while ( <$key_f> ) {
+        while (<$key_f>) {
             $recipient = $_;
         }
         @enc_cmd = (
-            "gpg", "--output", "$db",
-            "-a", "--recipient", "$recipient",
-            "--encrypt", "$file",
+            "gpg",         "--output",   "$db",       "-a",
+            "--recipient", "$recipient", "--encrypt", "$file",
         );
     }
     else {
         # gpg --output test.gpg --encrypt test -a --default-recipient-self
         @enc_cmd = (
-            "gpg", "--output", "$db",
-            "-a", "--default-recipient-self",
+            "gpg", "--output", "$db", "-a", "--default-recipient-self",
             "--encrypt", "$file",
         );
     }
@@ -59,6 +57,10 @@ sub encrypt_db {
     # Remove unencrypted file
     @rm_cmd = ( "rm", "-f", "$file" );
     system(@rm_cmd) == 0 or die "Cannot remove file $file: $!\n";
+
+    # Change file permissions
+    @chmod_cmd = ( "chmod", 600, $db );
+    system(@chmod_cmd) == 0 or die "Cannot chmod $file: $!\n";
 
     return 0;
 }
@@ -80,6 +82,10 @@ sub decrypt_db {
     # gpg --output /tmp/decryptfile --decrypt $db
     @dec_cmd = ( "$gpg", "--output", "$file", "--decrypt", "$db" );
     system(@dec_cmd) == 0 or die "Cannot decrypt $db: $!\n";
+
+    # Change file permissions
+    @chmod_cmd = ( "chmod", 600, $file );
+    system(@chmod_cmd) == 0 or die "Cannot chmod $file: $!\n";
 
     return $file;
 }
