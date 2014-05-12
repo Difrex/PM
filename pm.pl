@@ -15,11 +15,11 @@ our $VERSION = '0.0.1-beta1';
 my $usage = Usage->new();
 
 sub init() {
-    my $opt_string = 'swn:l:p:rhvou:i:';
+    my $opt_string = 'swn:l:p:rhvou:i:c:';
     getopts("$opt_string") or $usage->show();
     our (
         $opt_s, $opt_w, $opt_n, $opt_r, $opt_l, $opt_p,
-        $opt_h, $opt_v, $opt_o, $opt_u, $opt_i,
+        $opt_h, $opt_v, $opt_o, $opt_u, $opt_i, $opt_c,
     );
 
     print "Simple password manager writed in Perl.\nVersion: "
@@ -73,6 +73,7 @@ elsif ( defined($opt_s) and defined($opt_n) and defined($opt_o) ) {
     print $get_h->{resource} . "\n";
     print color 'reset';
 }
+
 # Remove string from db
 elsif ( defined($opt_r) and defined($opt_i) ) {
 
@@ -98,10 +99,11 @@ elsif ( defined($opt_w)
         resource => $opt_l,
         password => $opt_p,
         username => $opt_u,
+        comment  => $opt_c,
     };
 
     $pass->save($store_h) == 0 or die "Oops! 105: pm.pl. $!\n";
-    $copy->copy( $opt_p );
+    $copy->copy($opt_p);
     print color 'green';
     print "Password was stored into DB!\n";
     print color 'reset';
@@ -120,6 +122,7 @@ elsif ( defined($opt_w)
         password => $opt_p,
         gen      => 0,
         username => $opt_u,
+        comment  => $opt_c,
     };
 
     $pass->save($store_h) == 0 or die "Oops! 122: pm.pl. $!\n";

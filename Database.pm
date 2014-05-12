@@ -44,26 +44,32 @@ sub mdo {
 
         # Bad hack
         if ( $name eq 'all' ) {
-            my $q = 'select id, name, resource, username from passwords';
+            my $q
+                = 'select id, name, resource, username, comment from passwords';
 
             my $sth = $dbh->prepare($q);
             my $rv  = $sth->execute();
 
             use Term::ANSIColor;
-            printf "%-11s %-11s %-11s %-11s\n",
+            printf "%-11s %-11s %-11s %-11s %-11s\n",
                 colored( "ID",       'white' ),
                 colored( "NAME",     'magenta' ),
                 colored( "RESOURCE", 'blue' ),
-                colored( "USERNAME", 'green' );
-            print "=========================\n";
-            while ( my ( $id, $name, $resource, $username )
+                colored( "USERNAME", 'green' ),
+                colored( "COMMENT",  'yellow' );
+            print "=================================\n";
+            while ( my ( $id, $name, $resource, $username, $comment )
                 = $sth->fetchrow_array() )
             {
-                printf "%-11s %-11s %-11s %-11s\n",
+                if ( !defined($comment) ) {
+                    $comment = '';
+                }
+                printf "%-11s %-11s %-11s %-11s %-11s\n",
                     colored( $id,       'white' ),
                     colored( $name,     'magenta' ),
                     colored( $resource, 'blue' ),
-                    colored( $username, 'green' );
+                    colored( $username, 'green' ),
+                    colored( $comment,  'yellow' );
             }
 
             # Remove unencrypted file

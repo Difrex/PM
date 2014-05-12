@@ -68,8 +68,8 @@ sub remove {
 
     # Decrypt database
     my $dec_db_file = $gpg->decrypt_db();
-    my $q = "delete from passwords where id=$id";
-    my $mdo_q = {
+    my $q           = "delete from passwords where id=$id";
+    my $mdo_q       = {
         file  => $dec_db_file,
         query => $q,
         type  => 'do',
@@ -90,6 +90,12 @@ sub save {
     my $name     = $store->{name};
     my $resource = $store->{resource};
     my $password = $store->{password};
+    
+    # Comment check
+    my $comment  = '';
+    if ( defined( $store->{comment} ) ) {
+        $comment = $store->{comment};
+    }
 
     # Username check
     my $username = '';
@@ -99,8 +105,8 @@ sub save {
 
     # Decrypt database
     my $dec_db_file = $gpg->decrypt_db();
-    my $q = "insert into passwords(name, resource, password, username) 
-            values('$name', '$resource', '$password', '$username')";
+    my $q = "insert into passwords(name, resource, password, username, comment) 
+            values('$name', '$resource', '$password', '$username', '$comment')";
     my $mdo_q = {
         file  => $dec_db_file,
         name  => $name,

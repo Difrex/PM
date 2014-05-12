@@ -17,6 +17,7 @@ Simple password manager writed in Perl.
   -w                      store new password
   -l [Link]               link to resource
   -u                      username
+  -c                      comment
   -p [Password]           password
                           if key not selected PM generate secure password
                           and copy it to xclipboard
@@ -40,7 +41,7 @@ Examples:
   \tPassword copied to clipboard. Trying to open uri.
 
   Store new password:
-  \tpm.pl -w -n PRON -l http://superpronsite.com/ -p my_secret_password
+  \tpm.pl -w -n PRON -l http://superpronsite.com/ -p my_secret_password -c 'Most viewed site'
   \tPassword for resource PRON is stored into DB!
 
   Remove password:
