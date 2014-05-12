@@ -90,16 +90,11 @@ sub save {
     my $name     = $store->{name};
     my $resource = $store->{resource};
     my $password = $store->{password};
-    my $generate = $store->{gen};
 
     # Username check
     my $username = '';
     if ( defined( $store->{username} ) ) {
         $username = $store->{username};
-    }
-
-    if ( $generate == 1 ) {
-        $password = Password->generate();
     }
 
     # Decrypt database

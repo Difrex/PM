@@ -1,60 +1,22 @@
 #!/usr/bin/perl
 
-use Password;
 use Getopt::Std;
+use Term::ANSIColor;
+
+use Password;
 use ClipPass;
+use Usage;
 
 # Debug
 use Data::Dumper;
 
 our $VERSION = '0.0.1-beta1';
 
-sub usage() {
-    print STDERR << "EOF";
-Simple password manager writed in Perl. 
-
-  -s                      show password
-  -n [Name of resource]   name of resource
-  -w                      store new password
-  -l [Link]               link to resource
-  -u                      username
-  -p [Password]           password
-                          if key not selected PM generate secure password
-                          and copy it to xclipboard
-  -r                      remove password
-  -i                      password ID
-  -o                      open link
-  -h                      show this help screen and exit
-  -v                      show version info and exit
-
-Examples:
-
-  Show all names and resources:
-  \tpm.pl -s -n all
-
-  Copy password for resource:
-  \tpm.pl -s -n LOR
-  \tPassword copied to xclipboard.\n\t\tURI is http://linux.org.ru/
-
-  Copy password and open link:
-  \tpm.pl -s -n LOR -o
-  \tPassword copied to clipboard. Trying to open uri.
-
-  Store new password:
-  \tpm.pl -w -n PRON -l http://superpronsite.com/ -p my_secret_password
-  \tPassword for resource PRON is stored into DB!
-
-  Remove password:
-  \tpm.pl -r -i 13
-  \tPassword was removed!
-
-EOF
-    exit 1;
-}
+my $usage = Usage->new();
 
 sub init() {
     my $opt_string = 'swn:l:p:rhvou:i:';
-    getopts("$opt_string") or usage();
+    getopts("$opt_string") or $usage->show();
     our (
         $opt_s, $opt_w, $opt_n, $opt_r, $opt_l, $opt_p,
         $opt_h, $opt_v, $opt_o, $opt_u, $opt_i,
@@ -64,7 +26,7 @@ sub init() {
         . $VERSION
         . "\n" and exit 0
         if $opt_v;
-    usage if $opt_h;
+    $usage->show() if $opt_h;
 }
 
 my $pass = Password->new();
@@ -86,8 +48,6 @@ if ( defined($opt_s) and defined($opt_n) and !defined($opt_o) ) {
 
     $copy->copy($get_pass);
 
-    # TEST
-    use Term::ANSIColor;
     print color 'green';
     print "Password copied to xclipboard.";
     print color 'reset';
@@ -131,14 +91,20 @@ elsif ( defined($opt_w)
     # Generate password and store it into DB
     print "$opt_w, $opt_n, $opt_l, $opt_p\n";
 
+    $opt_p = $pass->generate();
+
     my $store_h = {
         name     => $opt_n,
         resource => $opt_l,
-        gen      => 1,
+        password => $opt_p,
         username => $opt_u,
     };
 
     $pass->save($store_h) == 0 or die "Oops! 105: pm.pl. $!\n";
+    $copy->copy( $opt_p );
+    print color 'green';
+    print "Password was stored into DB!\n";
+    print color 'reset';
 }
 elsif ( defined($opt_w)
     and defined($opt_n)
@@ -157,7 +123,10 @@ elsif ( defined($opt_w)
     };
 
     $pass->save($store_h) == 0 or die "Oops! 122: pm.pl. $!\n";
+    print color 'green';
+    print "Password was stored into DB!\n";
+    print color 'reset';
 }
 else {
-    usage;
+    $usage->show();
 }
