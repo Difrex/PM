@@ -121,7 +121,7 @@ sub create_base {
         my $dbh = DBI->connect( "dbi:SQLite:dbname=$first_sqlite", "", "" );
         print "Create database schema\n";
         my $q_table
-            = "create table passwords(name VARCHAR(32), username VARCHAR(32),
+            = "create table passwords(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name VARCHAR(32), username VARCHAR(32),
             resource TEXT, password TEXT)";
         $dbh->do($q_table);
 
