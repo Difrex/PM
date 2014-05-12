@@ -31,7 +31,7 @@ Examples:
   Show all names and resources:
   \tpm.pl -s -n all
 
-  Show password for resource:
+  Copy password for resource:
   \tpm.pl -s -n LOR
   \tPassword copied to xclipboard.\n\t\tURI is http://linux.org.ru/
 
