@@ -105,7 +105,13 @@ elsif ( defined($opt_s) and defined($opt_n) and defined($opt_o) ) {
     my @open_cmd = ( 'xdg-open', $get_h->{resource} );
     system(@open_cmd) == 0 or die "Cannot open URI: $!\n";
 
-    print "Password copied to clipboard. Trying to open uri.\n";
+    print color 'bold green';
+    print "Password copied to clipboard.\n";
+    print color 'reset';
+    print "Trying to open ";
+    print color 'bold blue';
+    print $get_h->{resource} . "\n";
+    print color 'reset';
 }
 # Remove string from db
 elsif ( defined($opt_r) and defined($opt_i) ) {

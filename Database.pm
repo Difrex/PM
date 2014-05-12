@@ -49,18 +49,27 @@ sub mdo {
             my $sth = $dbh->prepare($q);
             my $rv  = $sth->execute();
 
-
-
-            printf "%-11s %-11s %-11s %-11s\n", "ID", "NAME", "RESOURCE", "USERNAME";
+            use Term::ANSIColor;
+            printf "%-11s %-11s %-11s %-11s\n",
+                colored( "ID",       'white' ),
+                colored( "NAME",     'magenta' ),
+                colored( "RESOURCE", 'blue' ),
+                colored( "USERNAME", 'green' );
+            print "=========================\n";
             while ( my ( $id, $name, $resource, $username )
                 = $sth->fetchrow_array() )
             {
                 printf "%-11s %-11s %-11s %-11s\n",
-                $id, $name, $resource, $username;
+                    colored( $id,       'white' ),
+                    colored( $name,     'magenta' ),
+                    colored( $resource, 'blue' ),
+                    colored( $username, 'green' );
             }
+
             # Remove unencrypted file
             my @rm_cmd = ( "rm", "-f", "$db_file" );
-            system(@rm_cmd) == 0 or die "Cannot remove unencrypted database! $!\n";
+            system(@rm_cmd) == 0
+                or die "Cannot remove unencrypted database! $!\n";
             exit 0;
         }
 
