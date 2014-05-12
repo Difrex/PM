@@ -22,6 +22,7 @@ Simple password manager writed in Perl.
                           if key not selected PM generate secure password
                           and copy it to xclipboard
   -r                      remove password
+  -i                      password ID
   -o                      open link
   -h                      show this help screen and exit
   -v                      show version info and exit
@@ -48,11 +49,11 @@ EOF
 }
 
 sub init() {
-    my $opt_string = 'swn:l:p:rhvou:';
+    my $opt_string = 'swn:l:p:rhvou:i:';
     getopts("$opt_string") or usage();
     our (
-        $opt_s, $opt_w, $opt_n, $opt_r, $opt_l,
-        $opt_p, $opt_h, $opt_v, $opt_o, $opt_u
+        $opt_s, $opt_w, $opt_n, $opt_r, $opt_l, $opt_p,
+        $opt_h, $opt_v, $opt_o, $opt_u, $opt_i,
     );
 
     print "Simple password manager writed in Perl.\nVersion: "
@@ -76,10 +77,11 @@ my $copy = ClipPass->new();
 # It's really ugly code. Sorry :(
 if ( defined($opt_s) and defined($opt_n) and !defined($opt_o) ) {
 
-    my $get_h    = $pass->show($opt_n, $opt_u);
+    my $get_h = $pass->show( $opt_n, $opt_u );
     my $get_pass = $get_h->{password};
 
     $copy->copy($get_pass);
+
     # TEST
     use Term::ANSIColor;
     print color 'green';
@@ -92,7 +94,7 @@ if ( defined($opt_s) and defined($opt_n) and !defined($opt_o) ) {
 }
 elsif ( defined($opt_s) and defined($opt_n) and defined($opt_o) ) {
 
-    my $get_h = $pass->show($opt_n, $opt_u);
+    my $get_h = $pass->show( $opt_n, $opt_u );
     $copy->copy( $get_h->{password} );
 
     # Open resource.
@@ -100,6 +102,13 @@ elsif ( defined($opt_s) and defined($opt_n) and defined($opt_o) ) {
     system(@open_cmd) == 0 or die "Cannot open URI: $!\n";
 
     print "Password copied to clipboard. Trying to open uri.\n";
+}
+# Remove string from db
+elsif ( defined($opt_r) and defined($opt_i) ) {
+
+    my $store_h = { id => $opt_i, };
+
+    $pass->remove($store_h) == 0 or die "Oops! 105: pm.pl. $!\n";
 }
 elsif ( defined($opt_w)
     and defined($opt_n)
