@@ -36,12 +36,12 @@ sub show {
     # Query
     my $query_string;
     if ( defined($username) ) {
-        $query_string = "select name, resource, password from passwords 
+        $query_string = "select id, name, resource, password from passwords 
             where name='$name' and username='$username'";
     }
     else {
         $query_string
-            = "select name, resource, password from passwords where name='$name'";
+            = "select id, name, resource, password from passwords where name='$name'";
     }
 
     my $mdo_q = {

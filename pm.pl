@@ -36,13 +36,17 @@ Examples:
   \tpm.pl -s -n LOR
   \tPassword copied to xclipboard.\n\t\tURI is http://linux.org.ru/
 
+  Copy password and open link:
+  \tpm.pl -s -n LOR -o
+  \tPassword copied to clipboard. Trying to open uri.
+
   Store new password:
   \tpm.pl -w -n PRON -l http://superpronsite.com/ -p my_secret_password
   \tPassword for resource PRON is stored into DB!
 
-  Copy password and open link:
-  \tpm.pl -s -n LOR -o
-  \tPassword copied to clipboard. Trying to open uri.
+  Remove password:
+  \tpm.pl -r -i 13
+  \tPassword was removed!
 
 EOF
     exit 1;
@@ -108,7 +112,10 @@ elsif ( defined($opt_r) and defined($opt_i) ) {
 
     my $store_h = { id => $opt_i, };
 
-    $pass->remove($store_h) == 0 or die "Oops! 105: pm.pl. $!\n";
+    $pass->remove($store_h) == 0 or die "Oops! 111: pm.pl. $!\n";
+    print color 'bold red';
+    print "Password was removed!\n";
+    print color 'reset';
 }
 elsif ( defined($opt_w)
     and defined($opt_n)
