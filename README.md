@@ -59,6 +59,7 @@ Show help screen:
 
 ## 0.0.1-beta2
 
+* Key selection
 * Colored output support
 * Comments support
 * Remove passwords support
