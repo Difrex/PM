@@ -44,19 +44,19 @@ sub mdo {
 
         # Bad hack
         if ( $name eq 'all' ) {
-            my $q = 'select name, resource, username from passwords';
+            my $q = 'select id, name, resource, username from passwords';
 
             my $sth = $dbh->prepare($q);
             my $rv  = $sth->execute();
 
 
 
-            printf "%-11s %-11s %-11s\n", "NAME", "RESOURCE", "USERNAME";
-            while ( my ( $name, $resource, $username )
+            printf "%-11s %-11s %-11s %-11s\n", "ID", "NAME", "RESOURCE", "USERNAME";
+            while ( my ( $id, $name, $resource, $username )
                 = $sth->fetchrow_array() )
             {
-                printf "%-11s %-11s %-11s\n",
-                $name, $resource, "\t$username";
+                printf "%-11s %-11s %-11s %-11s\n",
+                $id, $name, $resource, $username;
             }
             # Remove unencrypted file
             my @rm_cmd = ( "rm", "-f", "$db_file" );
@@ -67,9 +67,10 @@ sub mdo {
         my $sth = $dbh->prepare($q);
         $sth->execute();
 
-        my ( $name, $resource, $password ) = $sth->fetchrow_array();
+        my ( $id, $name, $resource, $password ) = $sth->fetchrow_array();
 
         my $q_hash = {
+            id       => $id,
             name     => $name,
             resource => $resource,
             password => $password,
@@ -121,8 +122,8 @@ sub create_base {
         my $dbh = DBI->connect( "dbi:SQLite:dbname=$first_sqlite", "", "" );
         print "Create database schema\n";
         my $q_table
-            = "create table passwords(name VARCHAR(32), username VARCHAR(32),
-            resource TEXT, password TEXT)";
+            = "create table passwords(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name VARCHAR(32), username VARCHAR(32),
+            resource TEXT, password TEXT, comment TEXT)";
         $dbh->do($q_table);
 
         print "Encrypt database...\n";

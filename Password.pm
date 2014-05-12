@@ -59,6 +59,28 @@ sub show {
     return $q_hash;
 }
 
+# Remove password
+sub remove {
+    my ( $self, $store ) = @_;
+    my $db_class = $self->{_db};
+    my $gpg      = $self->{_gpg};
+    my $id       = $store->{id};
+
+    # Decrypt database
+    my $dec_db_file = $gpg->decrypt_db();
+    my $q = "delete from passwords where id=$id";
+    my $mdo_q = {
+        file  => $dec_db_file,
+        query => $q,
+        type  => 'do',
+    };
+
+    $db_class->mdo($mdo_q);
+    $gpg->encrypt_db($dec_db_file);
+
+    return 0;
+}
+
 # Decrypt base and store new password
 sub save {
     my ( $self, $store ) = @_;
@@ -72,8 +94,8 @@ sub save {
 
     # Username check
     my $username = '';
-    if (defined($store->{username})) {
-        $username = $store->{username}
+    if ( defined( $store->{username} ) ) {
+        $username = $store->{username};
     }
 
     if ( $generate == 1 ) {
