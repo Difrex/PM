@@ -32,8 +32,15 @@ Set this key(or another of cource) for default:
         
         vim ~/.gnupg/gpg.conf
         # find string and uncomment or add it
-        default-key your@mail-address-key.org
+        default-key key_email@example.com
         :wq
+
+You can use not default key:
+
+	# Create file with key email
+	cat > ~/.PM/.key << EOF
+	key_email@example.com
+	EOF
 
 First run:
        
@@ -62,6 +69,6 @@ Show help screen:
 
 # TODO
 
+* Import/Export with simple(only password) encryption
 * Password lenght
 * Store decrypted DB into RAM not in /tmp/
-* Different keys selection

@@ -10,7 +10,10 @@ sub new {
     my $home = $ENV{HOME};
     my $db   = $home . "/.PM/db.sqlite";
 
-    my $self = { _db => $db, };
+    my $self = { 
+        _db => $db,
+        _home => $home,
+     };
 
     bless $self, $class;
     return $self;
@@ -26,13 +29,30 @@ sub encrypt_db {
     @rm_db = ( "rm", "-f", "$db" );
     system(@rm_db) == 0 or die "Cannot remove old database: $!\n";
 
-    # gpg --output test.gpg --encrypt test -a --default-recipient-self
-    @enc_cmd = (
-        "gpg", "--output", "$db",
-        "-a", "--default-recipient-self",
-        "--encrypt", "$file",
-    );
-    
+    # Keys selection.
+    my @enc_cmd;
+    my $recipient;
+    if ( -e $self->{_home} . "/.PM/.key" ) {
+        open my $key_f, "<" , $self->{_home} . "/.PM/.key"
+            or die "Cannot open file: $!\n";
+        while ( <$key_f> ) {
+            $recipient = $_;
+        }
+        @enc_cmd = (
+            "gpg", "--output", "$db",
+            "-a", "--recipient", "$recipient",
+            "--encrypt", "$file",
+        );
+    }
+    else {
+        # gpg --output test.gpg --encrypt test -a --default-recipient-self
+        @enc_cmd = (
+            "gpg", "--output", "$db",
+            "-a", "--default-recipient-self",
+            "--encrypt", "$file",
+        );
+    }
+
     system(@enc_cmd) == 0
         or die "Cannot encrypt!\nDecrypted file: $file\nTraceback: $!\n";
 
