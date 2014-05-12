@@ -57,6 +57,12 @@ Show help screen:
 
 # Changelog
 
+## 0.0.1-beta2
+
+* Colored output support
+* Comments support
+* Remove passwords support
+
 ## 0.0.1-beta1
 
 * Show all enteries
