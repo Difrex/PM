@@ -15,11 +15,11 @@ our $VERSION = '0.0.1-beta1';
 my $usage = Usage->new();
 
 sub init() {
-    my $opt_string = 'swn:l:p:rhvou:i:c:';
+    my $opt_string = 'swn:l:p:rhvou:i:c:x:';
     getopts("$opt_string") or $usage->show();
     our (
-        $opt_s, $opt_w, $opt_n, $opt_r, $opt_l, $opt_p,
-        $opt_h, $opt_v, $opt_o, $opt_u, $opt_i, $opt_c,
+        $opt_s, $opt_w, $opt_n, $opt_r, $opt_l, $opt_p, $opt_h,
+        $opt_v, $opt_o, $opt_u, $opt_i, $opt_c, $opt_x,
     );
 
     print "Simple password manager writed in Perl.\nVersion: "
@@ -129,6 +129,11 @@ elsif ( defined($opt_w)
     print color 'green';
     print "Password was stored into DB!\n";
     print color 'reset';
+}
+# Export
+elsif ( defined($opt_x) ) {
+    $pass->export($opt_x);
+    print colored("Dabase stored in $opt_x\n", 'green');
 }
 else {
     $usage->show();
