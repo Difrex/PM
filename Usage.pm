@@ -25,6 +25,7 @@ Simple password manager writed in Perl.
   -i                      password ID
   -o                      open link
   -x [filename]           export
+  -I [filename]           import
   -h                      show this help screen and exit
   -v                      show version info and exit
 

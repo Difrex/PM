@@ -91,22 +91,39 @@ sub decrypt_db {
 }
 
 sub export {
-    my ($self, $file) = @_;
+    my ( $self, $file ) = @_;
 
     use Term::ANSIColor;
-    print "Password for " . colored("export\n", 'yellow');
+    print "Password for " . colored( "export\n", 'yellow' );
 
     # gpg --symmetric filename
-    my @enc_cmd = ('gpg', '--symmetric', "$file");
+    my @enc_cmd = ( 'gpg', '--symmetric', "$file" );
     system(@enc_cmd) == 0 or die "Cannot encrypt $file: $!\n";
 
     # Remove unencrypted file
-    my @rm_cmd = ('rm', '-f', "$file");
+    my @rm_cmd = ( 'rm', '-f', "$file" );
     system(@rm_cmd) == 0 or die "Cannot remove file $file: $!\n";
 
     my $export_file = $file . '.gpg';
 
     return $export_file;
+}
+
+sub import {
+    my ( $self, $file ) = @_;
+
+    # Generate random file name
+    my @chars = ( "A" .. "Z", "a" .. "z" );
+    my $string;
+    $string .= $chars[ rand @chars ] for 1 .. 10;
+    my $dec_file = "/tmp/pm." . $string;
+
+    # Decrypt database
+    # gpg --output filepath --decrypt encfile
+    my @dec_cmd = ( 'gpg', '--output', $dec_file, '--decrypt', $file );
+    system(@dec_cmd) == 0 or die "Cannot decrypt file $file: $!\n";
+
+    return $dec_file;
 }
 
 1;
