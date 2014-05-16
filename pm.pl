@@ -48,13 +48,9 @@ if ( defined($opt_s) and defined($opt_n) and !defined($opt_o) ) {
 
     $copy->copy($get_pass);
 
-    print color 'green';
-    print "Password copied to xclipboard.";
-    print color 'reset';
+    print colored("Password copied to xclipboard.", 'green');
     print "\nURI is ";
-    print color 'bold blue';
-    print $get_h->{resource} . "\n";
-    print color 'reset';
+    print colored($get_h->{resource} . "\n", 'bold blue');
 }
 elsif ( defined($opt_s) and defined($opt_n) and defined($opt_o) ) {
 
@@ -65,13 +61,9 @@ elsif ( defined($opt_s) and defined($opt_n) and defined($opt_o) ) {
     my @open_cmd = ( 'xdg-open', $get_h->{resource} );
     system(@open_cmd) == 0 or die "Cannot open URI: $!\n";
 
-    print color 'bold green';
-    print "Password copied to clipboard.\n";
-    print color 'reset';
+    print colored("Password copied to clipboard.\n", 'bold green');
     print "Trying to open ";
-    print color 'bold blue';
-    print $get_h->{resource} . "\n";
-    print color 'reset';
+    print colored($get_h->{resource} . "\n", 'bold blue');
 }
 
 # Remove string from db
@@ -80,9 +72,7 @@ elsif ( defined($opt_r) and defined($opt_i) ) {
     my $store_h = { id => $opt_i, };
 
     $pass->remove($store_h) == 0 or die "Oops! 111: pm.pl. $!\n";
-    print color 'bold red';
-    print "Password was removed!\n";
-    print color 'reset';
+    print colored("Password was removed!\n", 'bold red');
 }
 elsif ( defined($opt_w)
     and defined($opt_n)
@@ -104,9 +94,7 @@ elsif ( defined($opt_w)
 
     $pass->save($store_h) == 0 or die "Oops! 105: pm.pl. $!\n";
     $copy->copy($opt_p);
-    print color 'green';
-    print "Password was stored into DB!\n";
-    print color 'reset';
+    print colored("Password was stored into DB!\n", 'green');
 }
 elsif ( defined($opt_w)
     and defined($opt_n)
@@ -126,9 +114,7 @@ elsif ( defined($opt_w)
     };
 
     $pass->save($store_h) == 0 or die "Oops! 122: pm.pl. $!\n";
-    print color 'green';
-    print "Password was stored into DB!\n";
-    print color 'reset';
+    print colored("Password was stored into DB!\n", 'green');
 }
 # Export
 elsif ( defined($opt_x) ) {
