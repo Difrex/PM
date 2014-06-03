@@ -81,6 +81,19 @@ sub remove {
     return 0;
 }
 
+sub export {
+    my ( $self, $filename ) = @_;
+    my $gpg = $self->{_gpg};
+
+    my $dec_db_file = $gpg->decrypt_db();
+    my $export_enc  = $gpg->export($dec_db_file);
+
+    my @mv_cmd = ( 'mv', "$export_enc", "$filename" );
+    system(@mv_cmd) == 0 or die "Cannot move $export_enc to $filename: $!\n";
+
+    return 0;
+}
+
 # Decrypt base and store new password
 sub save {
     my ( $self, $store ) = @_;
@@ -119,27 +132,6 @@ sub save {
     $gpg->encrypt_db($dec_db_file);
 
     return 0;
-}
-
-sub export {
-    my ( $self, $filename ) = @_;
-    my $gpg = $self->{_gpg};
-
-    my $dec_db_file = $gpg->decrypt_db();
-    my $export_enc  = $gpg->export($dec_db_file);
-
-    my @mv_cmd = ( 'mv', "$export_enc", "$filename" );
-    system(@mv_cmd) == 0 or die "Cannot move $export_enc to $filename: $!\n";
-
-    return 0;
-}
-
-sub import {
-    my ( $self, $file ) = @_;
-    my $gpg      = $self->{_gpg};
-    my $db_class = $self->{_db};
-
-    my $dec_file = $gpg->import($file);
 }
 
 # Generate password
