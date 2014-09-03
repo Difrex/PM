@@ -122,7 +122,7 @@ sub save {
 
 # Generate password
 sub generate {
-    my @chars = ( "A" .. "Z", "a" .. "z", 0 .. 9 );
+    my @chars = ( "A" .. "Z", "a" .. "z", 0 .. 9, '!', '@', '$', '(', ')' );
     my $string;
     $string .= $chars[ rand @chars ] for 1 .. 16;
 
