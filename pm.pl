@@ -46,11 +46,21 @@ if ( defined($opt_s) and defined($opt_n) and !defined($opt_o) ) {
     my $get_h = $pass->show( $opt_n, $opt_u );
     my $get_pass = $get_h->{password};
 
-    $copy->copy($get_pass);
+    if ( defined( $ENV{'DISPLAY'} ) ) {
+        $copy->copy($get_pass);
 
-    print colored("Password copied to xclipboard.", 'green');
-    print "\nURI is ";
-    print colored($get_h->{resource} . "\n", 'bold blue');
+        print colored("Password copied to xclipboard.", 'green');
+        print "\nURI is ";
+        print colored($get_h->{resource} . "\n", 'bold blue');
+    }
+    else {
+        print colored("Warning! Password will show to terminal!", 'red');
+        print " Yes/No: ";
+        my $ans = <STDIN>;
+        chomp($ans);
+        print "$get_pass\n" if $ans eq "Yes";
+        print "Cancel\n" if $ans ne "Yes";
+    }
 }
 elsif ( defined($opt_s) and defined($opt_n) and defined($opt_o) ) {
 
