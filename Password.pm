@@ -136,9 +136,17 @@ sub save {
 
 # Generate password
 sub generate {
-    my @chars = ( "A" .. "Z", "a" .. "z", 0 .. 9, '!', '@', '$', '(', ')' );
+    my $value;
+    
+    open my $rnd, "<", "/dev/random"; 
+    read $rnd, $value, 32; 
+    my $c = unpack ("H*", $value);
+    
+    my @chars = split(//,$c);
+    push @chars, $_ for ( '!', '@', '(', ')','A'..'Z' );
+
     my $string;
-    $string .= $chars[ rand @chars ] for 1 .. 16;
+    $string .= $chars[ rand @chars ] for 1 .. 16; 
 
     return $string;
 }
