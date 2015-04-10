@@ -138,7 +138,7 @@ sub create_base {
         print "Create database schema\n";
         my $q_table
             = "create table passwords(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name VARCHAR(32), username VARCHAR(32),
-            resource TEXT, password TEXT, comment TEXT)";
+            resource TEXT, group VARCHAR(32), password TEXT, comment TEXT)";
         $dbh->do($q_table);
 
         print "Encrypt database...\n";
