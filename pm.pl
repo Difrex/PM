@@ -15,11 +15,11 @@ our $VERSION = '0.0.1-beta1';
 my $usage = Usage->new();
 
 sub init() {
-    my $opt_string = 'swn:l:p:rhvou:i:c:';
+    my $opt_string = 'swn:l:p:rhvou:i:c:x:';
     getopts("$opt_string") or $usage->show();
     our (
-        $opt_s, $opt_w, $opt_n, $opt_r, $opt_l, $opt_p,
-        $opt_h, $opt_v, $opt_o, $opt_u, $opt_i, $opt_c,
+        $opt_s, $opt_w, $opt_n, $opt_r, $opt_l, $opt_p, $opt_h,
+        $opt_v, $opt_o, $opt_u, $opt_i, $opt_c, $opt_x,
     );
 
     print "Simple password manager writed in Perl.\nVersion: "
@@ -46,15 +46,21 @@ if ( defined($opt_s) and defined($opt_n) and !defined($opt_o) ) {
     my $get_h = $pass->show( $opt_n, $opt_u );
     my $get_pass = $get_h->{password};
 
-    $copy->copy($get_pass);
+    if ( defined( $ENV{'DISPLAY'} ) ) {
+        $copy->copy($get_pass);
 
-    print color 'green';
-    print "Password copied to xclipboard.";
-    print color 'reset';
-    print "\nURI is ";
-    print color 'bold blue';
-    print $get_h->{resource} . "\n";
-    print color 'reset';
+        print colored("Password copied to xclipboard.", 'green');
+        print "\nURI is ";
+        print colored($get_h->{resource} . "\n", 'bold blue');
+    }
+    else {
+        print colored("Warning! Password will show to terminal!", 'red');
+        print " Yes/No: ";
+        my $ans = <STDIN>;
+        chomp($ans);
+        print "$get_pass\n" if $ans eq "Yes";
+        print "Cancel\n" if $ans ne "Yes";
+    }
 }
 elsif ( defined($opt_s) and defined($opt_n) and defined($opt_o) ) {
 
@@ -65,13 +71,9 @@ elsif ( defined($opt_s) and defined($opt_n) and defined($opt_o) ) {
     my @open_cmd = ( 'xdg-open', $get_h->{resource} );
     system(@open_cmd) == 0 or die "Cannot open URI: $!\n";
 
-    print color 'bold green';
-    print "Password copied to clipboard.\n";
-    print color 'reset';
+    print colored("Password copied to clipboard.\n", 'bold green');
     print "Trying to open ";
-    print color 'bold blue';
-    print $get_h->{resource} . "\n";
-    print color 'reset';
+    print colored($get_h->{resource} . "\n", 'bold blue');
 }
 
 # Remove string from db
@@ -80,9 +82,7 @@ elsif ( defined($opt_r) and defined($opt_i) ) {
     my $store_h = { id => $opt_i, };
 
     $pass->remove($store_h) == 0 or die "Oops! 111: pm.pl. $!\n";
-    print color 'bold red';
-    print "Password was removed!\n";
-    print color 'reset';
+    print colored("Password was removed!\n", 'bold red');
 }
 elsif ( defined($opt_w)
     and defined($opt_n)
@@ -104,9 +104,7 @@ elsif ( defined($opt_w)
 
     $pass->save($store_h) == 0 or die "Oops! 105: pm.pl. $!\n";
     $copy->copy($opt_p);
-    print color 'green';
-    print "Password was stored into DB!\n";
-    print color 'reset';
+    print colored("Password was stored into DB!\n", 'green');
 }
 elsif ( defined($opt_w)
     and defined($opt_n)
@@ -126,9 +124,12 @@ elsif ( defined($opt_w)
     };
 
     $pass->save($store_h) == 0 or die "Oops! 122: pm.pl. $!\n";
-    print color 'green';
-    print "Password was stored into DB!\n";
-    print color 'reset';
+    print colored("Password was stored into DB!\n", 'green');
+}
+# Export
+elsif ( defined($opt_x) ) {
+    $pass->export($opt_x);
+    print colored("Dabase stored in $opt_x\n", 'green');
 }
 else {
     $usage->show();

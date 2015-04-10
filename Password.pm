@@ -81,6 +81,19 @@ sub remove {
     return 0;
 }
 
+sub export {
+    my ( $self, $filename ) = @_;
+    my $gpg = $self->{_gpg};
+
+    my $dec_db_file = $gpg->decrypt_db();
+    my $export_enc  = $gpg->export($dec_db_file);
+
+    my @mv_cmd = ( 'mv', "$export_enc", "$filename" );
+    system(@mv_cmd) == 0 or die "Cannot move $export_enc to $filename: $!\n";
+
+    return 0;
+}
+
 # Decrypt base and store new password
 sub save {
     my ( $self, $store ) = @_;
@@ -90,9 +103,9 @@ sub save {
     my $name     = $store->{name};
     my $resource = $store->{resource};
     my $password = $store->{password};
-    
+
     # Comment check
-    my $comment  = '';
+    my $comment = '';
     if ( defined( $store->{comment} ) ) {
         $comment = $store->{comment};
     }
@@ -105,7 +118,8 @@ sub save {
 
     # Decrypt database
     my $dec_db_file = $gpg->decrypt_db();
-    my $q = "insert into passwords(name, resource, password, username, comment) 
+    my $q
+        = "insert into passwords(name, resource, password, username, comment) 
             values('$name', '$resource', '$password', '$username', '$comment')";
     my $mdo_q = {
         file  => $dec_db_file,
@@ -122,9 +136,17 @@ sub save {
 
 # Generate password
 sub generate {
-    my @chars = ( "A" .. "Z", "a" .. "z", 0 .. 9, '!', '@', '$', '(', ')' );
+    my $value;
+    
+    open my $rnd, "<", "/dev/random"; 
+    read $rnd, $value, 32; 
+    my $c = unpack ("H*", $value);
+    
+    my @chars = split(//,$c);
+    push @chars, $_ for ( '!', '@', '(', ')','A'..'Z' );
+
     my $string;
-    $string .= $chars[ rand @chars ] for 1 .. 16;
+    $string .= $chars[ rand @chars ] for 1 .. 16; 
 
     return $string;
 }

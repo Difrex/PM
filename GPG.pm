@@ -90,4 +90,23 @@ sub decrypt_db {
     return $file;
 }
 
+sub export {
+    my ($self, $file) = @_;
+
+    use Term::ANSIColor;
+    print "Password for " . colored("export\n", 'yellow');
+
+    # gpg --symmetric filename
+    my @enc_cmd = ('gpg', '--symmetric', "$file");
+    system(@enc_cmd) == 0 or die "Cannot encrypt $file: $!\n";
+
+    # Remove unencrypted file
+    my @rm_cmd = ('rm', '-f', "$file");
+    system(@rm_cmd) == 0 or die "Cannot remove file $file: $!\n";
+
+    my $export_file = $file . '.gpg';
+
+    return $export_file;
+}
+
 1;
