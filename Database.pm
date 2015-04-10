@@ -94,7 +94,7 @@ sub mdo {
                 colored( "RESOURCE", 'blue' ),
                 colored( "USERNAME", 'green' ),
                 colored( "COMMENT",  'yellow' );
-            print "=========================================\n";
+            print "===============================\n";
 
             while ( my ( $id, $name, $group, $resource, $username, $comment )
                 = $sth->fetchrow_array() )
