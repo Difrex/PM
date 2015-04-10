@@ -2,6 +2,7 @@ package Database;
 
 use DBI;
 use GPG;
+use Term::ANSIColor;
 
 use Password;
 
@@ -36,6 +37,7 @@ sub mdo {
     my $q       = $query->{query};
     my $name    = $query->{name};
     my $type    = $query->{type};
+    my $g       = $query->{group};
 
     my $dbh = Database->connect($db_file);
 
@@ -50,7 +52,6 @@ sub mdo {
             my $sth = $dbh->prepare($q);
             my $rv  = $sth->execute();
 
-            use Term::ANSIColor;
             printf "%-11s %-11s %-11s %-11s %-11s\n",
                 colored( "ID",       'white' ),
                 colored( "NAME",     'magenta' ),
@@ -65,6 +66,39 @@ sub mdo {
                 if ( !defined($comment) ) {
                     $comment = '';
                 }
+                printf "%-11s %-11s %-11s %-11s %-11s %-11s\n",
+                    colored( $id,       'white' ),
+                    colored( $name,     'magenta' ),
+                    colored( $group,    'bold magenta' ),
+                    colored( $resource, 'blue' ),
+                    colored( $username, 'green' ),
+                    colored( $comment,  'yellow' );
+            }
+
+            # Remove unencrypted file
+            my @rm_cmd = ( "rm", "-f", "$db_file" );
+            system(@rm_cmd) == 0
+                or die "Cannot remove unencrypted database! $!\n";
+            exit 0;
+        }
+
+        # Show group
+        if ($g) {
+            my $sth = $dbh->prepare($q);
+            my $rv  = $sth->execute();
+
+            printf "%-11s %-11s %-11s %-11s %-11s\n",
+                colored( "ID",       'white' ),
+                colored( "NAME",     'magenta' ),
+                colored( "GROUP",    'bold magenta' ),
+                colored( "RESOURCE", 'blue' ),
+                colored( "USERNAME", 'green' ),
+                colored( "COMMENT",  'yellow' );
+            print "=========================================\n";
+
+            while ( my ( $id, $name, $group, $resource, $username, $comment )
+                = $sth->fetchrow_array() )
+            {
                 printf "%-11s %-11s %-11s %-11s %-11s %-11s\n",
                     colored( $id,       'white' ),
                     colored( $name,     'magenta' ),

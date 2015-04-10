@@ -15,11 +15,11 @@ our $VERSION = '0.0.1-beta1';
 my $usage = Usage->new();
 
 sub init() {
-    my $opt_string = 'swn:l:p:rhvou:i:c:x:';
+    my $opt_string = 'swn:l:p:rhvou:i:c:x:g:';
     getopts("$opt_string") or $usage->show();
     our (
         $opt_s, $opt_w, $opt_n, $opt_r, $opt_l, $opt_p, $opt_h,
-        $opt_v, $opt_o, $opt_u, $opt_i, $opt_c, $opt_x,
+        $opt_v, $opt_o, $opt_u, $opt_i, $opt_c, $opt_x, $opt_g,
     );
 
     print "Simple password manager writed in Perl.\nVersion: "
@@ -62,6 +62,11 @@ if ( defined($opt_s) and defined($opt_n) and !defined($opt_o) ) {
         print "Cancel\n" if $ans ne "Yes";
     }
 }
+if ( defined($opt_s) and defined($opt_g) ) {
+
+    $pass->show( $opt_n, '', $opt_g );
+  
+}
 elsif ( defined($opt_s) and defined($opt_n) and defined($opt_o) ) {
 
     my $get_h = $pass->show( $opt_n, $opt_u );
@@ -90,7 +95,7 @@ elsif ( defined($opt_w)
     and !defined($opt_p) )
 {
     # Generate password and store it into DB
-    print "$opt_w, $opt_n, $opt_l, $opt_p\n";
+    $opt_g = '' if !($opt_g);
 
     $opt_p = $pass->generate();
 
@@ -100,6 +105,7 @@ elsif ( defined($opt_w)
         password => $opt_p,
         username => $opt_u,
         comment  => $opt_c,
+        group    => $opt_g,
     };
 
     $pass->save($store_h) == 0 or die "Oops! 105: pm.pl. $!\n";
@@ -112,7 +118,7 @@ elsif ( defined($opt_w)
     and defined($opt_p) )
 {
     # Store new password into DB
-    print "$opt_w, $opt_n, $opt_l, $opt_p\n";
+    $opt_g = '' if !($opt_g);
 
     my $store_h = {
         name     => $opt_n,
@@ -121,6 +127,7 @@ elsif ( defined($opt_w)
         gen      => 0,
         username => $opt_u,
         comment  => $opt_c,
+        group    => $opt_g,
     };
 
     $pass->save($store_h) == 0 or die "Oops! 122: pm.pl. $!\n";

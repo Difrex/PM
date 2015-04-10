@@ -26,7 +26,7 @@ sub new {
 }
 
 sub show {
-    my ( $self, $name, $username ) = @_;
+    my ( $self, $name, $username, $g ) = @_;
     my $db_class = $self->{_db};
     my $gpg      = $self->{_gpg};
 
@@ -35,21 +35,34 @@ sub show {
 
     # Query
     my $query_string;
-    if ( defined($username) ) {
+    if ( defined($username) and !($g)) {
         $query_string = "select id, name, resource, password from passwords 
             where name='$name' and username='$username'";
+    }
+    # Fasthack
+    elsif ( defined($g)) {
+        $query_string = "select id, name, `group`, resource, username, comment from passwords where `group`='$g'";
     }
     else {
         $query_string
             = "select id, name, resource, password from passwords where name='$name'";
     }
 
-    my $mdo_q = {
+    my $mdo_q;
+
+    $mdo_q = {
         file  => $dec_db_file,
         query => $query_string,
         name  => $name,
         type  => 'select',
     };
+    $mdo_q = {
+        file  => $dec_db_file,
+        query => $query_string,
+        name  => $name,
+        type  => 'select',
+        group => $g,
+    } if $g;
     my $q_hash = $db_class->mdo($mdo_q);
 
     # Remove unencrypted file
@@ -103,6 +116,7 @@ sub save {
     my $name     = $store->{name};
     my $resource = $store->{resource};
     my $password = $store->{password};
+    my $group    = $store->{group};
 
     # Comment check
     my $comment = '';
@@ -119,8 +133,8 @@ sub save {
     # Decrypt database
     my $dec_db_file = $gpg->decrypt_db();
     my $q
-        = "insert into passwords(name, resource, password, username, comment) 
-            values('$name', '$resource', '$password', '$username', '$comment')";
+        = "insert into passwords(name, resource, password, username, comment, 'group') 
+            values('$name', '$resource', '$password', '$username', '$comment', '$group')";
     my $mdo_q = {
         file  => $dec_db_file,
         name  => $name,
@@ -137,16 +151,17 @@ sub save {
 # Generate password
 sub generate {
     my $value;
-    
-    open my $rnd, "<", "/dev/random"; 
-    read $rnd, $value, 32; 
-    my $c = unpack ("H*", $value);
-    
-    my @chars = split(//,$c);
-    push @chars, $_ for ( '!', '@', '(', ')','A'..'Z' );
+
+    open my $rnd, "<", "/dev/random";
+    read $rnd, $value, 32;
+    my $c = unpack( "H*", $value );
+    close $rnd;
+
+    my @chars = split( //, $c );
+    push @chars, $_ for ( '!', '@', '(', ')', 'A' .. 'Z' );
 
     my $string;
-    $string .= $chars[ rand @chars ] for 1 .. 16; 
+    $string .= $chars[ rand @chars ] for 1 .. 16;
 
     return $string;
 }
