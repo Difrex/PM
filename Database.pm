@@ -2,6 +2,7 @@ package Database;
 
 use DBI;
 use GPG;
+use Term::ANSIColor;
 
 use Password;
 
@@ -36,6 +37,7 @@ sub mdo {
     my $q       = $query->{query};
     my $name    = $query->{name};
     my $type    = $query->{type};
+    my $g       = $query->{group};
 
     my $dbh = Database->connect($db_file);
 
@@ -45,28 +47,62 @@ sub mdo {
         # Bad hack
         if ( $name eq 'all' ) {
             my $q
-                = 'select id, name, resource, username, comment from passwords';
+                = 'select id, name, `group`, resource, username, comment from passwords';
 
             my $sth = $dbh->prepare($q);
             my $rv  = $sth->execute();
 
-            use Term::ANSIColor;
             printf "%-11s %-11s %-11s %-11s %-11s\n",
                 colored( "ID",       'white' ),
                 colored( "NAME",     'magenta' ),
+                colored( "GROUP",    'bold magenta' ),
                 colored( "RESOURCE", 'blue' ),
                 colored( "USERNAME", 'green' ),
                 colored( "COMMENT",  'yellow' );
-            print "=================================\n";
-            while ( my ( $id, $name, $resource, $username, $comment )
+            print "=========================================\n";
+            while ( my ( $id, $name, $group, $resource, $username, $comment )
                 = $sth->fetchrow_array() )
             {
                 if ( !defined($comment) ) {
                     $comment = '';
                 }
-                printf "%-11s %-11s %-11s %-11s %-11s\n",
+                printf "%-11s %-11s %-11s %-11s %-11s %-11s\n",
                     colored( $id,       'white' ),
                     colored( $name,     'magenta' ),
+                    colored( $group,    'bold magenta' ),
+                    colored( $resource, 'blue' ),
+                    colored( $username, 'green' ),
+                    colored( $comment,  'yellow' );
+            }
+
+            # Remove unencrypted file
+            my @rm_cmd = ( "rm", "-f", "$db_file" );
+            system(@rm_cmd) == 0
+                or die "Cannot remove unencrypted database! $!\n";
+            exit 0;
+        }
+
+        # Show group
+        if ($g) {
+            my $sth = $dbh->prepare($q);
+            my $rv  = $sth->execute();
+
+            printf "%-11s %-11s %-11s %-11s %-11s\n",
+                colored( "ID",       'white' ),
+                colored( "NAME",     'magenta' ),
+                colored( "GROUP",    'bold magenta' ),
+                colored( "RESOURCE", 'blue' ),
+                colored( "USERNAME", 'green' ),
+                colored( "COMMENT",  'yellow' );
+            print "===============================\n";
+
+            while ( my ( $id, $name, $group, $resource, $username, $comment )
+                = $sth->fetchrow_array() )
+            {
+                printf "%-11s %-11s %-11s %-11s %-11s %-11s\n",
+                    colored( $id,       'white' ),
+                    colored( $name,     'magenta' ),
+                    colored( $group,    'bold magenta' ),
                     colored( $resource, 'blue' ),
                     colored( $username, 'green' ),
                     colored( $comment,  'yellow' );
@@ -137,8 +173,15 @@ sub create_base {
         my $dbh = DBI->connect( "dbi:SQLite:dbname=$first_sqlite", "", "" );
         print "Create database schema\n";
         my $q_table
-            = "create table passwords(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name VARCHAR(32), username VARCHAR(32),
-            resource TEXT, password TEXT, comment TEXT)";
+            = "CREATE TABLE passwords(
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                    name VARCHAR(32) NOT NULL, 
+                    username VARCHAR(32) NOT NULL, 
+                    resource TEXT NOT NULL, 
+                    password VARCHAR(32) NOT NULL, 
+                    comment TEXT NOT NULL, 
+                    'group' VARCHAR(32) NOT NULL
+                )";
         $dbh->do($q_table);
 
         print "Encrypt database...\n";
