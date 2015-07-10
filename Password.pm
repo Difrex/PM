@@ -182,7 +182,7 @@ sub generate {
     my @r_special = ( '!', '@', '(', ')', '#', '$', '%', '^', '&' ); 
     for (1..10) {
         foreach my $special (@r_special) {
-            $chars[ rand(@chars) ] = $special ];
+            $chars[ rand(@chars) ] = $special;
         }
     }
 
