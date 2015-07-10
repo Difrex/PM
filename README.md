@@ -57,6 +57,10 @@ Show help screen:
 
 # Changelog
 
+## 0.0.2
+* Groups support
+* More entropy in password generation
+
 ## 0.0.1-beta2
 
 * Key selection
