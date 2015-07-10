@@ -7,6 +7,9 @@ use utf8;
 use Database;
 use GPG;
 
+use Digest::MD5;
+use MIME::Base64;
+
 # Debug
 use Data::Dumper;
 
@@ -151,17 +154,40 @@ sub save {
 # Generate password
 sub generate {
     my $value;
+    
+    # Defaults
+    my $length = 16;
 
-    open my $rnd, "<", "/dev/random";
-    read $rnd, $value, 32;
-    my $c = unpack( "H*", $value );
-    close $rnd;
+    my $digest;
+    for (1..32) {
+        open my $rnd, "<", "/dev/urandom";
+        read $rnd, $value, 1000;
+        my $c = unpack( "H*", $value );
+        close $rnd;
 
-    my @chars = split( //, $c );
-    push @chars, $_ for ( '!', '@', '(', ')', 'A' .. 'Z' );
+        # MORE ENTROPY
+        my $ctx = Digest::MD5->new();
+        $ctx->add($c);
+        
+        # MORE
+        my $encoded = encode_base64( $ctx->hexdigest() );
+        $encoded =~ s/=//g;
+        $encoded =~ s/\n//g;
+
+        $digest .= $encoded;
+    }
+
+    my @chars = split( //, $digest );
+    
+    my @r_special = ( '!', '@', '(', ')', '#', '$', '%', '^', '&' ); 
+    for (1..10) {
+        foreach my $special (@r_special) {
+            $chars[ rand(@chars) ] = $special ];
+        }
+    }
 
     my $string;
-    $string .= $chars[ rand @chars ] for 1 .. 16;
+    $string .= $chars[ rand @chars ] for 1 .. $length;
 
     return $string;
 }
