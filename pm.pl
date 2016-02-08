@@ -45,6 +45,9 @@ if ( defined($opt_s) and defined($opt_n) and !defined($opt_o) ) {
 
     my $get_h = $pass->show( $opt_n, $opt_u );
     my $get_pass = $get_h->{password};
+    
+    print colored( "Password for $opt_n not found\n", 'red' ) and exit 1 
+        if !($get_pass);
 
     if ( defined( $ENV{'DISPLAY'} ) ) {
         $copy->copy($get_pass);
@@ -72,7 +75,12 @@ if ( defined($opt_s) and defined($opt_g) ) {
 elsif ( defined($opt_s) and defined($opt_n) and defined($opt_o) ) {
 
     my $get_h = $pass->show( $opt_n, $opt_u );
-    $copy->copy( $get_h->{password} );
+
+    my $get_pass = $get_h->{password};
+    print colored( "Password for $opt_n not found\n", 'red' ) and exit 1 
+        if !($get_pass);
+    
+    $copy->copy( $get_pass );
 
     # Open resource.
     my @open_cmd = ( 'xdg-open', $get_h->{resource} );

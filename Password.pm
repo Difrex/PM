@@ -161,7 +161,7 @@ sub generate {
     my $digest;
     for (1..32) {
         open my $rnd, "<", "/dev/urandom";
-        read $rnd, $value, 1000;
+        read $rnd, $value, 4096;
         my $c = unpack( "H*", $value );
         close $rnd;
 
