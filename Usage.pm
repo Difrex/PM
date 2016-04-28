@@ -14,6 +14,7 @@ Simple password manager writed in Perl.
 
   -s                      show password
   -n [Name of resource]   name of resource
+  -g [Group name]         group name
   -w                      store new password
   -l [Link]               link to resource
   -u                      username
@@ -32,6 +33,9 @@ Examples:
 
   Show all names and resources:
   \tpm.pl -s -n all
+
+  Show all names in group:
+  \tpm.pl -s -g work
 
   Copy password for resource:
   \tpm.pl -s -n LOR
