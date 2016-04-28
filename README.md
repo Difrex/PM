@@ -1,7 +1,7 @@
 PM
 ==
 
-Simple password manager writed in perl.
+Simple password manager writen in perl.
 
 # INSTALL
 
@@ -21,6 +21,10 @@ On Fedora:
 On Debian-based systems:
 
 	apt-get install libtext-clip-perl class-dbi-sqlite-perl
+
+On On Arch-based systems:
+
+    yaourt -S perl-dbd-sqlite perl-clipboard
 
 # Usage
 
