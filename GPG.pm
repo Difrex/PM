@@ -77,7 +77,7 @@ sub decrypt_db {
     my @chars = ( "A" .. "Z", "a" .. "z" );
     my $string;
     $string .= $chars[ rand @chars ] for 1 .. 10;
-    my $file = '/tmp/' . 'pm.' . $string;
+    my $file = '/dev/shm/' . 'pm.' . $string;
 
     # gpg --output /tmp/decryptfile --decrypt $db
     @dec_cmd = ( "$gpg", "--output", "$file", "--decrypt", "$db" );
@@ -107,6 +107,20 @@ sub export {
     my $export_file = $file . '.gpg';
 
     return $export_file;
+}
+
+sub import_db {
+    my ($self, $file) = @_;
+
+    my @chars = ( "A" .. "Z", "a" .. "z" );
+    my $string;
+
+    $string .= $chars[ rand @chars ] for 1 .. 10;
+    my $tmpfile = '/dev/shm/' . 'pm.' . $string;
+
+    system("gpg --output $tmpfile --decrypt $file") == 0 or die "Cannot decrypt $file: $!\n";
+    my $encrypted = $self->encrypt_db($tmpfile);
+    return $encrypted;
 }
 
 1;
