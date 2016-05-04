@@ -84,6 +84,4 @@ Show help screen:
 
 # TODO
 
-* Import/Export with simple(only password) encryption
-* Password lenght
 * Store decrypted DB into RAM not in /tmp/

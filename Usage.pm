@@ -21,11 +21,13 @@ Simple password manager writed in Perl.
   -c                      comment
   -p [Password]           password
                           if key not selected PM generate secure password
+      -e [number]           (with length [number] if mentioned)
                           and copy it to xclipboard
   -r                      remove password
   -i                      password ID
   -o                      open link
   -x [filename]           export
+  -b [filename]           import database
   -h                      show this help screen and exit
   -v                      show version info and exit
 

@@ -110,6 +110,13 @@ sub export {
     return 0;
 }
 
+sub import_db {
+    my ( $self, $filename ) = @_;
+    my $gpg = $self->{_gpg};
+
+    return $gpg->import_db($filename);
+}
+
 # Decrypt base and store new password
 sub save {
     my ( $self, $store ) = @_;
@@ -153,10 +160,14 @@ sub save {
 
 # Generate password
 sub generate {
+    my ($self, $length) = @_;
+
     my $value;
     
     # Defaults
-    my $length = 16;
+    if (!$length) {
+	$length = 16;
+    }
 
     my $digest;
     for (1..32) {

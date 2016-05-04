@@ -15,11 +15,12 @@ our $VERSION = '0.0.1';
 my $usage = Usage->new();
 
 sub init() {
-    my $opt_string = 'swn:l:p:rhvou:i:c:x:g:';
+    my $opt_string = 'swn:l:p:rhvou:i:c:x:g:b:e:';
     getopts("$opt_string") or $usage->show();
     our (
         $opt_s, $opt_w, $opt_n, $opt_r, $opt_l, $opt_p, $opt_h,
         $opt_v, $opt_o, $opt_u, $opt_i, $opt_c, $opt_x, $opt_g,
+	$opt_b, $opt_e
     );
 
     print "Simple password manager writed in Perl.\nVersion: "
@@ -107,7 +108,11 @@ elsif ( defined($opt_w)
     # Generate password and store it into DB
     $opt_g = '' if !($opt_g);
 
-    $opt_p = $pass->generate();
+    if ( defined($opt_e) ) {
+	$pass_length=$opt_e;
+    }
+
+    $opt_p = $pass->generate($pass_length);
 
     my $store_h = {
         name     => $opt_n,
@@ -148,6 +153,10 @@ elsif ( defined($opt_w)
 elsif ( defined($opt_x) ) {
     $pass->export($opt_x);
     print colored( "Dabase stored in $opt_x\n", 'green' );
+}
+elsif ( defined($opt_b) ) {
+    $pass->import_db($opt_b);
+    print colored( "Database imported from $opt_b\n", 'green' );
 }
 else {
     $usage->show();
