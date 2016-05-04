@@ -22,7 +22,7 @@ On Debian-based systems:
 
 	apt-get install libtext-clip-perl class-dbi-sqlite-perl
 
-On On Arch-based systems:
+On Arch-based systems:
 
     yaourt -S perl-dbd-sqlite perl-clipboard
 
@@ -60,6 +60,11 @@ Show help screen:
         $ ./pm.pl -h
 
 # Changelog
+
+## 0.0.3
+* DB import
+* Password length
+* /dev/shm for DB decrypt
 
 ## 0.0.2
 * Groups support
