@@ -30,6 +30,51 @@ sub connect {
     return $dbh;
 }
 
+sub print_table {
+    my ( $sth ) = @_;
+
+    @max = (0, 0, 0, 0, 0, 0);
+    @rows;
+    $sum = 2;
+
+    @colors = ("white", "magenta", "bold magenta", "blue", "green", "yellow");
+    while ( my @row = $sth->fetchrow_array() )
+    {
+	push(@rows, \@row);		
+    }
+
+    @labels = ("ID", "NAME", "GROUP", "RESOURCE", "USERNAME", "COMMENT");
+    @rows=reverse(@rows);
+    push(@rows, \@labels);
+
+    foreach my $row(@rows) {
+	for $i (0 .. 5) {
+	    $str = $row -> [$i];
+	    $l=length($str);
+	    if ($l > $max[$i]) {
+		$max[$i] = $l;
+	    }
+	}
+    }
+
+    foreach my $num(@max) {
+	$sum += ($num + 3);
+    }
+
+    while (my $row = pop(@rows)) {
+	print "-" x $sum . "\n";
+	for $i (0 .. 5) {
+	    $l=$max[$i];
+	    $string=$row -> [$i];
+	    $strl=$l-length($string);
+	    $color=$colors[$i];
+	    printf "| %s ", colored($string, $color).(' ' x $strl);
+	}
+	print " |\n";
+    }
+    print "-" x $sum . "\n";
+}
+
 # Query proccessing mechanism
 sub mdo {
     my ( $self, $query ) = @_;
@@ -52,28 +97,7 @@ sub mdo {
             my $sth = $dbh->prepare($q);
             my $rv  = $sth->execute();
 
-            printf "%-11s %-11s %-11s %-11s %-11s\n",
-                colored( "ID",       'white' ),
-                colored( "NAME",     'magenta' ),
-                colored( "GROUP",    'bold magenta' ),
-                colored( "RESOURCE", 'blue' ),
-                colored( "USERNAME", 'green' ),
-                colored( "COMMENT",  'yellow' );
-            print "=========================================\n";
-            while ( my ( $id, $name, $group, $resource, $username, $comment )
-                = $sth->fetchrow_array() )
-            {
-                if ( !defined($comment) ) {
-                    $comment = '';
-                }
-                printf "%-11s %-11s %-11s %-11s %-11s %-11s\n",
-                    colored( $id,       'white' ),
-                    colored( $name,     'magenta' ),
-                    colored( $group,    'bold magenta' ),
-                    colored( $resource, 'blue' ),
-                    colored( $username, 'green' ),
-                    colored( $comment,  'yellow' );
-            }
+	    print_table ($sth);
 
             # Remove unencrypted file
             my @rm_cmd = ( "rm", "-f", "$db_file" );
@@ -87,26 +111,7 @@ sub mdo {
             my $sth = $dbh->prepare($q);
             my $rv  = $sth->execute();
 
-            printf "%-11s %-11s %-11s %-11s %-11s\n",
-                colored( "ID",       'white' ),
-                colored( "NAME",     'magenta' ),
-                colored( "GROUP",    'bold magenta' ),
-                colored( "RESOURCE", 'blue' ),
-                colored( "USERNAME", 'green' ),
-                colored( "COMMENT",  'yellow' );
-            print "===============================\n";
-
-            while ( my ( $id, $name, $group, $resource, $username, $comment )
-                = $sth->fetchrow_array() )
-            {
-                printf "%-11s %-11s %-11s %-11s %-11s %-11s\n",
-                    colored( $id,       'white' ),
-                    colored( $name,     'magenta' ),
-                    colored( $group,    'bold magenta' ),
-                    colored( $resource, 'blue' ),
-                    colored( $username, 'green' ),
-                    colored( $comment,  'yellow' );
-            }
+	    print_table($sth);
 
             # Remove unencrypted file
             my @rm_cmd = ( "rm", "-f", "$db_file" );
