@@ -123,13 +123,14 @@ sub mdo {
         my $sth = $dbh->prepare($q);
         $sth->execute();
 
-        my ( $id, $name, $resource, $password ) = $sth->fetchrow_array();
+        my ( $id, $name, $resource, $password, $username ) = $sth->fetchrow_array();
 
         my $q_hash = {
             id       => $id,
             name     => $name,
             resource => $resource,
             password => $password,
+            username => $username
         };
         return $q_hash;
     }

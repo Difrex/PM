@@ -39,7 +39,7 @@ sub show {
     # Query
     my $query_string;
     if ( defined($username) and !($g)) {
-        $query_string = "select id, name, resource, password from passwords 
+        $query_string = "select id, name, resource, password, username from passwords 
             where name='$name' and username='$username'";
     }
     # Fasthack
@@ -48,7 +48,7 @@ sub show {
     }
     else {
         $query_string
-            = "select id, name, resource, password from passwords where name='$name'";
+            = "select id, name, resource, password, username from passwords where name='$name'";
     }
 
     my $mdo_q;

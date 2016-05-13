@@ -54,8 +54,10 @@ if ( defined($opt_s) and defined($opt_n) and !defined($opt_o) ) {
         $copy->copy($get_pass);
 
         print colored( "Password copied to xclipboard.", 'green' );
-        print "\nURI is ";
+        print "\nURI: ";
         print colored( $get_h->{resource} . "\n", 'bold blue' );
+        print "User: ";
+        print colored( $get_h->{username} . "\n", 'bold yellow');
     }
     else {
         print colored( "Warning! Password will show to terminal!", 'red' );
