@@ -61,6 +61,10 @@ Show help screen:
 
 # Changelog
 
+## 0.0.4
+* Table beautiful view
+* Show username 
+
 ## 0.0.3
 * DB import
 * Password length
