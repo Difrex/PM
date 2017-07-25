@@ -93,4 +93,4 @@ Show help screen:
 
 # TODO
 
-* Store decrypted DB into RAM not in /tmp/
+* ~~Store decrypted DB into RAM not in /tmp/~~
