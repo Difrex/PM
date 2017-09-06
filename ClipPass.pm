@@ -1,6 +1,8 @@
 package ClipPass;
 
-use Clipboard;
+if ("$^O" ne 'darwin') {
+    use Clipboard;
+}
 
 sub new {
     my $class = shift;
@@ -14,14 +16,18 @@ sub new {
 sub copy {
     my ( $self, $password ) = @_;
 
-    if ( 'Clipboard::Xclip' eq $Clipboard::driver ) {
-        no warnings 'redefine';
-        *Clipboard::Xclip::all_selections = sub {
-            qw(clipboard primary buffer secondary);
-        };
+    if ("$^O" eq 'linux') {
+        if ( 'Clipboard::Xclip' eq $Clipboard::driver ) {
+            no warnings 'redefine';
+            *Clipboard::Xclip::all_selections = sub {
+                qw(clipboard primary buffer secondary);
+            };
     }
-
-    Clipboard->copy("$password");
+        Clipboard->copy("$password");
+    } elsif ("$^O" eq 'darwin') {
+        my $pbcopy = "echo '$password' | pbcopy";
+        system($pbcopy) == 0 or die "$!\n";
+    }
 }
 
 1;

@@ -10,7 +10,7 @@ use Usage;
 # Debug
 use Data::Dumper;
 
-our $VERSION = '0.0.1';
+our $VERSION = '0.0.5';
 
 my $usage = Usage->new();
 
@@ -23,7 +23,7 @@ sub init() {
 	$opt_b, $opt_e
     );
 
-    print "Simple password manager writed in Perl.\nVersion: "
+    print "Simple password manager write in Perl.\nVersion: "
         . $VERSION
         . "\n" and exit 0
         if $opt_v;
@@ -50,22 +50,23 @@ if ( defined($opt_s) and defined($opt_n) and !defined($opt_o) ) {
     print colored( "Password for $opt_n not found\n", 'red' ) and exit 1 
         if !($get_pass);
 
-    if ( defined( $ENV{'DISPLAY'} ) ) {
+    if ( defined( $ENV{'DISPLAY'} ) or ("$^O" eq 'darwin') ) {
         $copy->copy($get_pass);
 
-        print colored( "Password copied to xclipboard.", 'green' );
+        print colored( "Password was copied to clipboard.", 'green' );
         print "\nURI: ";
         print colored( $get_h->{resource} . "\n", 'bold blue' );
         print "User: ";
         print colored( $get_h->{username} . "\n", 'bold yellow');
-    }
-    else {
-        print colored( "Warning! Password will show to terminal!", 'red' );
-        print " Yes/No: ";
-        my $ans = <STDIN>;
-        chomp($ans);
-        print "$get_pass\n" if $ans eq "Yes";
-        print "Cancel\n" if $ans ne "Yes";
+    } else {
+        if ( "$^O" ne 'darwin' and "$^O" ne 'linux' ) {
+            print colored( "Warning! Password will show to terminal!", 'red' );
+            print " Yes/No: ";
+            my $ans = <STDIN>;
+            chomp($ans);
+            print "$get_pass\n" if $ans eq "Yes";
+            print "Cancel\n" if $ans ne "Yes";
+        }
     }
 
     exit 0;
