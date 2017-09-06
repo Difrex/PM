@@ -71,14 +71,20 @@ sub decrypt_db {
     my ($self) = @_;
     my $db = $self->{_db};
 
-    my $gpg = '/usr/bin/gpg';
+    my $gpg = 'gpg';
 
     # Generate random file name
     my @chars = ( "A" .. "Z", "a" .. "z" );
     my $string;
     $string .= $chars[ rand @chars ] for 1 .. 10;
-    my $file = '/dev/shm/' . 'pm.' . $string;
-
+    my $file;
+    if ( "$^O" eq 'darwin' ) { 
+        $file = '/tmp/' . 'pm.' . $string;
+    } elsif ( "$^O" eq 'linux' ) {
+        $file = '/dev/shm/' . 'pm.' . $string;
+    } else {
+        die "Unsupported OS!\n";
+    }
     # gpg --output /tmp/decryptfile --decrypt $db
     @dec_cmd = ( "$gpg", "--output", "$file", "--decrypt", "$db" );
     system(@dec_cmd) == 0 or die "Cannot decrypt $db: $!\n";
@@ -116,7 +122,13 @@ sub import_db {
     my $string;
 
     $string .= $chars[ rand @chars ] for 1 .. 10;
-    my $tmpfile = '/dev/shm/' . 'pm.' . $string;
+    if ( "$^O" eq 'darwin' ) { 
+        $file = '/tmp/' . 'pm.' . $string;
+    } elsif ( "$^O" eq 'linux' ) {
+        $file = '/dev/shm/' . 'pm.' . $string;
+    } else {
+        die "Unsupported OS!\n";
+    }
 
     system("gpg --output $tmpfile --decrypt $file") == 0 or die "Cannot decrypt $file: $!\n";
     my $encrypted = $self->encrypt_db($tmpfile);

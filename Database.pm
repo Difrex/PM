@@ -40,7 +40,7 @@ sub print_table {
     @colors = ("white", "magenta", "bold magenta", "blue", "green", "yellow");
     while ( my @row = $sth->fetchrow_array() )
     {
-	push(@rows, \@row);		
+        push(@rows, \@row);		
     }
 
     @labels = ("ID", "NAME", "GROUP", "RESOURCE", "USERNAME", "COMMENT");
@@ -48,29 +48,29 @@ sub print_table {
     push(@rows, \@labels);
 
     foreach my $row(@rows) {
-	for $i (0 .. 5) {
-	    $str = $row -> [$i];
-	    $l=length($str);
-	    if ($l > $max[$i]) {
-		$max[$i] = $l;
-	    }
-	}
+        for $i (0 .. 5) {
+            $str = $row -> [$i];
+            $l=length($str);
+            if ($l > $max[$i]) {
+                $max[$i] = $l;
+            }
+        }
     }
 
     foreach my $num(@max) {
-	$sum += ($num + 3);
+        $sum += ($num + 3);
     }
 
     while (my $row = pop(@rows)) {
-	print "-" x $sum . "\n";
-	for $i (0 .. 5) {
-	    $l=$max[$i];
-	    $string=$row -> [$i];
-	    $strl=$l-length($string);
-	    $color=$colors[$i];
-	    printf "| %s ", colored($string, $color).(' ' x $strl);
-	}
-	print " |\n";
+        print "-" x $sum . "\n";
+        for $i (0 .. 5) {
+            $l=$max[$i];
+            $string=$row -> [$i];
+            $strl=$l-length($string);
+            $color=$colors[$i];
+            printf "| %s ", colored($string, $color).(' ' x $strl);
+        }
+        print " |\n";
     }
     print "-" x $sum . "\n";
 }
@@ -97,7 +97,7 @@ sub mdo {
             my $sth = $dbh->prepare($q);
             my $rv  = $sth->execute();
 
-	    print_table ($sth);
+            print_table ($sth);
 
             # Remove unencrypted file
             my @rm_cmd = ( "rm", "-f", "$db_file" );
@@ -111,7 +111,7 @@ sub mdo {
             my $sth = $dbh->prepare($q);
             my $rv  = $sth->execute();
 
-	    print_table($sth);
+            print_table($sth);
 
             # Remove unencrypted file
             my @rm_cmd = ( "rm", "-f", "$db_file" );
