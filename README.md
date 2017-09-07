@@ -61,6 +61,10 @@ Show help screen:
 
 # Changelog
 
+## 0.0.5
+
+MacOS support
+
 ## 0.0.4
 * Table beautiful view
 * Show username 

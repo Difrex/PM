@@ -27,6 +27,8 @@ sub copy {
     } elsif ("$^O" eq 'darwin') {
         my $pbcopy = "echo '$password' | pbcopy";
         system($pbcopy) == 0 or die "$!\n";
+    } else {
+        die "Unsupported OS\n";
     }
 }
 
