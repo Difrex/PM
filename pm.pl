@@ -20,8 +20,8 @@ sub init() {
     our (
         $opt_s, $opt_w, $opt_n, $opt_r, $opt_l, $opt_p, $opt_h,
         $opt_v, $opt_o, $opt_u, $opt_i, $opt_c, $opt_x, $opt_g,
-	$opt_b, $opt_e
-    );
+        $opt_b, $opt_e
+        );
 
     print "Simple password manager write in Perl.\nVersion: "
         . $VERSION
@@ -87,7 +87,13 @@ elsif ( defined($opt_s) and defined($opt_n) and defined($opt_o) ) {
     $copy->copy( $get_pass );
 
     # Open resource.
-    my @open_cmd = ( 'xdg-open', $get_h->{resource} );
+    my @open_cmd;
+    if ("$^O" eq 'darwin') {
+        @open_cmd = ( 'open', $get_h->{resource} );
+    }
+    else {
+        @open_cmd = ( 'xdg-open', $get_h->{resource} );
+    }
     system(@open_cmd) == 0 or die "Cannot open URI: $!\n";
 
     print colored( "Password copied to clipboard.\n", 'bold green' );
@@ -104,15 +110,15 @@ elsif ( defined($opt_r) and defined($opt_i) ) {
     print colored( "Password was removed!\n", 'bold red' );
 }
 elsif ( defined($opt_w)
-    and defined($opt_n)
-    and defined($opt_l)
-    and !defined($opt_p) )
+        and defined($opt_n)
+        and defined($opt_l)
+        and !defined($opt_p) )
 {
     # Generate password and store it into DB
     $opt_g = '' if !($opt_g);
 
     if ( defined($opt_e) ) {
-	$pass_length=$opt_e;
+        $pass_length=$opt_e;
     }
 
     $opt_p = $pass->generate($pass_length);
@@ -131,9 +137,9 @@ elsif ( defined($opt_w)
     print colored( "Password was stored into DB!\n", 'green' );
 }
 elsif ( defined($opt_w)
-    and defined($opt_n)
-    and defined($opt_l)
-    and defined($opt_p) )
+        and defined($opt_n)
+        and defined($opt_l)
+        and defined($opt_p) )
 {
     # Store new password into DB
     $opt_g = '' if !($opt_g);
